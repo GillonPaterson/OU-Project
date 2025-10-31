@@ -1,0 +1,39 @@
+[
+  {
+    "name": "test title",
+    "codename": "test_title",
+    "type": "text",
+    "is_required": true,
+    "allowed_table_formatting": [
+      "heading1",
+      "heading2",
+      "heading3"
+    ],
+    "allowed_blocks": [
+      "text",
+      "tables"
+    ],
+    "maximum_text_length": {
+      "applies_to": "characters",
+      "value": 50
+    }
+  },
+  {
+    "name": "test multi select",
+    "codename": "test_multi_select",
+    "type": "text",
+    "is_required": true,
+    "options": [
+      "test1",
+      "test2",
+      "test3",
+      "test4"
+    ]
+  },
+  {
+    "name": "test numbers",
+    "codename": "test_numbers",
+    "type": "text",
+    "is_required": true
+  }
+]

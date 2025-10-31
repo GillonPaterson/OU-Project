@@ -1,0 +1,29 @@
+{
+  "Main": {
+    "test_title": {
+      "type": "StructuredText",
+      "config": {
+        "single": "heading1,heading2,heading3",
+        "label": "test title"
+      }
+    },
+    "test_multi_select": {
+      "type": "Select",
+      "config": {
+        "options": [
+          "test1",
+          "test2",
+          "test3",
+          "test4"
+        ],
+        "label": "test multi select"
+      }
+    },
+    "test_numbers": {
+      "type": "Number",
+      "config": {
+        "label": "test numbers"
+      }
+    }
+  }
+}
