@@ -55,7 +55,7 @@ export function splitPrismicPageComponents(pages: PrismicResponse): PrismicPage[
   * Accepts Multiple Prismic Pages maps each PrismicTabs Components to KontentAI Compontents and Returns Multiple Kontent Pages
   * If the json.length is greater than 1 .ie there is more than one tab then the tabName is passed to the Kontent mapper to create the content_group (tabs in kontent)
  */
-function mapPrismicPageToKontentPage(pages: PrismicPage[]): KontentPage[] {
+export function mapPrismicPageToKontentPage(pages: PrismicPage[]): KontentPage[] {
 
 	return pages.map((page) => {
 		const { json, ...pageRest } = page;

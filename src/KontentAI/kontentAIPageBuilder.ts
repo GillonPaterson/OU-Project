@@ -1,6 +1,7 @@
 import {
 	createManagementClient,
 	ContentTypeElements,
+	ManagementClient,
 } from "@kontent-ai/management-sdk";
 import * as dotenv from "dotenv";
 import {
@@ -20,33 +21,31 @@ if (!KONTENT_PROJECT_ID || !KONTENTAI_KEY) {
 	throw new Error("KontentAI EnVars Not Provided")
 }
 
-const client = createManagementClient({
-	environmentId: KONTENT_PROJECT_ID, // id of your Kontent.ai environment
-	apiKey: KONTENTAI_KEY, // Content management API token
-});
+// const client = createManagementClient({
+// 	// environmentId: KONTENT_PROJECT_ID, // id of your Kontent.ai environment
+// 	// apiKey: KONTENTAI_KEY, // Content management API token
+// });
 
 /**
  * Builds the Page in KontentAI Accepts a single Kontent Page
  * For Pages with multiple tabs the tabs elements are mapped individually and then flattened to one big array with the content-group specified for each element
  */
-export async function kontentPageBuilder(page: KontentPage) {
-
+export async function kontentPageBuilder(page: KontentPage, client: ManagementClient) {
 	const contentTypeResponse = await client
 		.addContentType()
 		.withData((builder) => {
-			
-			if (page.pageTabs.length > 1 ) {
-				const contentGroups = buildCreateContentGroup(page.pageTabs)
+			if (page.pageTabs.length > 1) {
+				const contentGroups = buildCreateContentGroup(page.pageTabs);
 
-				page.pageTabs.map(tab => {
-					return tab.pageElements.map(element => {
+				page.pageTabs.map((tab) => {
+					return tab.pageElements.map((element) => {
 						return buildElement(builder, element);
-					}) 
-				})
+					});
+				});
 
 				const allElements = page.pageTabs.flatMap((tab) => tab.pageElements);
-				
-				throw new Error("killed it")
+
+				throw new Error("killed it");
 
 				return {
 					name: page.pageName,
@@ -56,13 +55,13 @@ export async function kontentPageBuilder(page: KontentPage) {
 				};
 			}
 
-			page.pageTabs.map(tab => {
-				return tab.pageElements.map(element => {
+			page.pageTabs.map((tab) => {
+				return tab.pageElements.map((element) => {
 					return buildElement(builder, element);
-				})
-			})
+				});
+			});
 
-			throw new Error("killed it")
+			throw new Error("killed it");
 
 			return {
 				name: page.pageName,
