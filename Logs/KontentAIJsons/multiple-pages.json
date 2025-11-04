@@ -4,17 +4,15 @@
     "codeName": "main",
     "pageElements": [
       {
-        "name": "page-title",
-        "codename": "page_title",
+        "name": "pGe title",
+        "codename": "pge_title",
         "type": "rich_text",
         "is_required": true,
         "allowed_table_formatting": [
-          "heading1",
           "heading2",
           "heading3",
           "heading4",
-          "heading5",
-          "heading6"
+          "heading5"
         ],
         "allowed_blocks": [
           "text",
@@ -23,24 +21,43 @@
         "maximum_text_length": {
           "applies_to": "characters",
           "value": 50
+        },
+        "content_group": {
+          "external_id": "main"
         }
       },
       {
-        "name": "page-paragrph",
-        "codename": "page_paragrph",
+        "name": "number field",
+        "codename": "number_field",
+        "type": "number",
+        "is_required": true,
+        "content_group": {
+          "external_id": "main"
+        }
+      }
+    ]
+  },
+  {
+    "tabName": "Another Page",
+    "codeName": "another_page",
+    "pageElements": [
+      {
+        "name": "Another Pages Text",
+        "codename": "another_pages_text",
         "type": "rich_text",
         "is_required": true,
         "allowed_table_formatting": [
           "paragraph",
-          "heading1",
+          "preformatted",
           "heading2",
-          "heading3",
           "heading4",
           "heading5",
+          "heading6",
           "em",
-          "hyperlink",
+          "image",
           "list-item",
-          "o-list-item"
+          "o-list-item",
+          "rtl"
         ],
         "allowed_blocks": [
           "text",
@@ -49,14 +66,10 @@
         "maximum_text_length": {
           "applies_to": "characters",
           "value": 50
+        },
+        "content_group": {
+          "external_id": "another_page"
         }
-      },
-      {
-        "name": "page-link",
-        "codename": "page_link",
-        "type": "url_slug",
-        "is_required": true,
-        "value": null
       }
     ]
   }

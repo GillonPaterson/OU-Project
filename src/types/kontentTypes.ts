@@ -1,19 +1,16 @@
-// kontentTypes.ts
-import { Elements as KontentElements } from "@kontent-ai/delivery-sdk";
-import { ContentTypeElements } from "@kontent-ai/management-sdk";
+import type {
+	ContentTypeElements,
+	ElementModels,
+} from "@kontent-ai/management-sdk";
+import {  } from "@kontent-ai/management-sdk";
 
-// Each builder call returns one of these:
+type KontentAIElementType = ElementModels.ElementType;
+
 export type ContentTypeElement =
 	| ContentTypeElements.ITextElement
 	| ContentTypeElements.IRichTextElement
 	| ContentTypeElements.IAssetElement
 	| ContentTypeElements.INumberElement;
-
-// The mapped element structure
-export interface KontentElement {
-	kontentType: string; // e.g. 'text', 'rich_text', etc
-	kontentElement: KontentElementConfig;
-}
 
 export type KontentElementConfig =
 	| KontentTextElementConfig
@@ -22,11 +19,15 @@ export type KontentElementConfig =
 	| KontentUrlSlugElementConfig
 	| KontentNumberElementConfig;
 
+
 interface KontentBaseElementConfig {
 	name: string;
 	codename: string;
-	type: string;
+	type: KontentAIElementType;
 	is_required: boolean;
+	content_group?: {
+		external_id: string;
+	};
 }
 
 export interface KontentTextElementConfig extends KontentBaseElementConfig {
@@ -43,16 +44,31 @@ export interface KontentRichTextElementConfig extends KontentTextElementConfig {
 	allowed_blocks: string[];
 }
 
-export interface KontentMultipleChoiceElementConfig extends KontentBaseElementConfig {
+export interface KontentMultipleChoiceElementConfig
+	extends KontentBaseElementConfig {
 	options: string[];
 }
 
 export interface KontentUrlSlugElementConfig extends KontentBaseElementConfig {
-	value: string;
+	value: string | null | undefined;
 }
 
 export interface KontentPage {
 	pageName: string;
 	codename: string;
+	pageTabs: KontentTab[];
+}
+
+export interface KontentTab {
+	tabName: string;
+	codeName: string;
 	pageElements: KontentElementConfig[];
+}
+
+export interface KontentCreateContentType extends Array<CreateContentType> {}
+
+export interface CreateContentType {
+	name: string,
+	codename: string,
+	external_id?: string
 }

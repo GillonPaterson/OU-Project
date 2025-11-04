@@ -49,7 +49,6 @@ export interface SliceField extends BasePrismicField {
 	config: { label?: string; fields: Record<string, PrismicField> };
 }
 
-// Union type
 export type PrismicField =
 	| StructuredTextField
 	| LinkField
@@ -59,34 +58,30 @@ export type PrismicField =
 	| DateField
 	| SliceField;
 
+
+export interface PrismicResponse extends Array<PrismicPage> {}
+
 export interface PrismicPage {
-	Main: Record<string, PrismicField>;
+	id: string;
+	label: string;
+	repeatable: boolean;
+	status: boolean;
+	format: string;
+	json: PrismicTab[];
+}
+
+export interface PrismicTab {
+	tabName: string;
+	components: PrismicComponent[];
 }
 
 export interface PrismicComponent {
-	key: string;
 	type: string;
-	config: Record<string, any>;
-}
-
-export enum PrismicKey {
-	StructuredTextField,
-	LinkField,
-	ImageField,
-	BooleanField,
-	NumberField,
-	DateField,
-	SliceField,
-}
-export interface PrismicPage {
-	id: string;
-	json: Record<string, any>;
-	label: string;
-	repeatable: string;
-	status: boolean;
-	format: string;
-}
-
-export interface PrismicResponse {
-	data: PrismicPage[];
+	config: {
+		label: string;
+		single?: string;
+		multi?: string;
+		options?: string[];
+		select?: string | null;
+	};
 }

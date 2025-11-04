@@ -3,9 +3,9 @@
 ## How It Works
 
 1. Pulls all custom type schemas from Prismic using Prismic API
-2. Passes Json of page components to `splitPrismicComponents` to separate into an array of elements
-3. The Array of Pages is then looped through passing each component into `mapPrismicToKontentElement` where the prismic component type is matched to a KontentAi type and calls the relevenet function to map the json component to prismic
-4. Once the Pages Components have been converted to KontentAI objects the Page is sent to the `kontentPageBuilder` where the components are looped through and the config for each component is passed into the relevant component builder function and returned to be sent as a API request and made in KontentAI
+2. Passes `PrismicResponse` which is an array of all the pages to `splitPrismicComponents` to separate each tabs elements into an array of elements from an object.
+3. The Array of PrismicPages is passed to `mapPrismicPageToKontentPage` where each prismic element is passed to the relevant function to return a KontentElement returning multiple KontentPages
+4. The multiple Kontent Pages are then looped through to passed each one into the `KontentAIPageBuilder` to construct the request and build the page in KontentAI.
 
 ## Logging
 

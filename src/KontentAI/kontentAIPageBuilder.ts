@@ -7,7 +7,9 @@ import {
 	KontentPage,
 	ContentTypeElement,
 	KontentElementConfig,
-} from "../types/kontentTypes";
+	KontentTab,
+	KontentCreateContentType,
+} from "../types/kontentTypes.ts";
 import { ElementType } from "@kontent-ai/delivery-sdk";
 
 dotenv.config();
@@ -23,24 +25,49 @@ const client = createManagementClient({
 	apiKey: KONTENTAI_KEY, // Content management API token
 });
 
+/**
+ * Builds the Page in KontentAI Accepts a single Kontent Page
+ * For Pages with multiple tabs the tabs elements are mapped individually and then flattened to one big array with the content-group specified for each element
+ */
 export async function kontentPageBuilder(page: KontentPage) {
-	const builtTypes: ContentTypeElements.ContentTypeElementModel[] = [];
 
 	const contentTypeResponse = await client
 		.addContentType()
 		.withData((builder) => {
-			page.pageElements.forEach((element) => {
-				const builtElement = buildElement(builder, element);
-				builtTypes.push(builtElement);
-			});
+			
+			if (page.pageTabs.length > 1 ) {
+				const contentGroups = buildCreateContentGroup(page.pageTabs)
 
-			console.log(builtTypes);
+				page.pageTabs.map(tab => {
+					return tab.pageElements.map(element => {
+						return buildElement(builder, element);
+					}) 
+				})
+
+				const allElements = page.pageTabs.flatMap((tab) => tab.pageElements);
+				
+				throw new Error("killed it")
+
+				return {
+					name: page.pageName,
+					codename: page.codename,
+					content_groups: contentGroups,
+					elements: allElements,
+				};
+			}
+
+			page.pageTabs.map(tab => {
+				return tab.pageElements.map(element => {
+					return buildElement(builder, element);
+				})
+			})
+
 			throw new Error("killed it")
 
 			return {
 				name: page.pageName,
 				codename: page.codename,
-				elements: builtTypes,
+				elements: page.pageTabs[0].pageElements,
 			};
 		})
 		.toPromise();
@@ -52,6 +79,9 @@ export async function kontentPageBuilder(page: KontentPage) {
 	return contentTypeResponse;
 }
 
+/**
+ * Accepts KontentElement and returns the builder.whateverElement to the request
+ */
 function buildElement(
 	builder: any,
 	element: KontentElementConfig
@@ -68,4 +98,20 @@ function buildElement(
 		default:
 			return builder.numberElement(element);
 	}
+}
+
+/**
+ * Accepts Multiple KontentTabs and creates the json Request for contentGroups to make tabs in KontentAI  
+*/
+function buildCreateContentGroup(tabs: KontentTab[]): KontentCreateContentType {
+	const content_groups: KontentCreateContentType = [];
+
+	tabs.forEach((tab) => {
+		content_groups.push({
+			name: tab.tabName,
+			codename: tab.codeName,
+		});
+	});
+
+	return content_groups
 }
