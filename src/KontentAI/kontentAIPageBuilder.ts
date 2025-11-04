@@ -21,10 +21,10 @@ if (!KONTENT_PROJECT_ID || !KONTENTAI_KEY) {
 	throw new Error("KontentAI EnVars Not Provided")
 }
 
-// const client = createManagementClient({
-// 	// environmentId: KONTENT_PROJECT_ID, // id of your Kontent.ai environment
-// 	// apiKey: KONTENTAI_KEY, // Content management API token
-// });
+const client = createManagementClient({
+	environmentId: KONTENT_PROJECT_ID, // id of your Kontent.ai environment
+	apiKey: KONTENTAI_KEY, // Content management API token
+});
 
 /**
  * Builds the Page in KontentAI Accepts a single Kontent Page

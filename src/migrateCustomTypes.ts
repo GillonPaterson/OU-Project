@@ -28,10 +28,12 @@ export async function fetchCustomTypes(): Promise<PrismicResponse> {
 
 		const data: PrismicResponse = response.data;
 
+
 		console.log("✅ Logging Prismic Jsons");
 		data.forEach((page) => {
 			writeJsonToPrismic(page.id, page.json, "PrismicJsons");
 		});
+		
 
 		return data;
 	} catch (error: any) {
@@ -48,19 +50,21 @@ export async function migrateCustomTypes() {
 	const kontentMappedPages =
 		ConvertPrismicElementsToKontentAI(prismicPagesJson);
 
+	const kontentClient = createKontentClient();
+
 	console.log("✅ Logging Mapped KontentAI Jsons");
 	kontentMappedPages.forEach((page) => {
 		writeJsonToPrismic(page.pageName, page.pageTabs, "KontentAIJsons");
 	});
 
 	// Function Call to Write to KontentAI
-	// kontentMappedPages.forEach(async (page) => {
-	// 	try {
-	// 		await kontentPageBuilder(page, createKontentClient);
-	// 	} catch (e) {
-	// 		console.log("Something Went Wrong", e);
-	// 	}
-	// });
+	kontentMappedPages.forEach(async (page) => {
+		try {
+			await kontentPageBuilder(page, kontentClient);
+		} catch (e) {
+			console.log("Something Went Wrong", e);
+		}
+	});
 }
 
 migrateCustomTypes();

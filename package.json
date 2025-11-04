@@ -2,7 +2,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "NODE_NO_WARNINGS=1 ts-node --esm src/migrateCustomTypes.ts",
-		"test": "jest"
+		"test": "TEST_MODE=true jest"
 	},
 	"dependencies": {
 		"@kontent-ai/delivery-sdk": "^14.2.0",
