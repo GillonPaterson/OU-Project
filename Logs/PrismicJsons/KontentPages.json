@@ -1,0 +1,517 @@
+[
+  {
+    "pageName": "multiple-pages",
+    "codename": "multiple_pages",
+    "pageTabs": [
+      {
+        "tabName": "Main",
+        "codeName": "main",
+        "pageElements": [
+          {
+            "name": "pGe title",
+            "codename": "pge_title",
+            "type": "rich_text",
+            "is_required": true,
+            "allowed_table_formatting": [
+              "heading2",
+              "heading3",
+              "heading4",
+              "heading5"
+            ],
+            "allowed_blocks": [
+              "text",
+              "tables"
+            ],
+            "maximum_text_length": {
+              "applies_to": "characters",
+              "value": 50
+            },
+            "content_group": {
+              "external_id": "Main"
+            }
+          },
+          {
+            "name": "number field",
+            "codename": "number_field",
+            "type": "number",
+            "is_required": true,
+            "content_group": {
+              "external_id": "Main"
+            }
+          }
+        ],
+        "snippets": [],
+        "groups": []
+      },
+      {
+        "tabName": "Another Page",
+        "codeName": "another_page",
+        "pageElements": [
+          {
+            "name": "Another Pages Text",
+            "codename": "another_pages_text",
+            "type": "rich_text",
+            "is_required": true,
+            "allowed_table_formatting": [
+              "paragraph",
+              "preformatted",
+              "heading2",
+              "heading4",
+              "heading5",
+              "heading6",
+              "em",
+              "image",
+              "list-item",
+              "o-list-item",
+              "rtl"
+            ],
+            "allowed_blocks": [
+              "text",
+              "tables"
+            ],
+            "maximum_text_length": {
+              "applies_to": "characters",
+              "value": 50
+            },
+            "content_group": {
+              "external_id": "Another Page"
+            }
+          }
+        ],
+        "snippets": [],
+        "groups": []
+      }
+    ]
+  },
+  {
+    "pageName": "repeatable-type",
+    "codename": "repeatable_type",
+    "pageTabs": [
+      {
+        "tabName": "Main",
+        "codeName": "main",
+        "pageElements": [
+          {
+            "name": "test title",
+            "codename": "test_title",
+            "type": "rich_text",
+            "is_required": true,
+            "allowed_table_formatting": [
+              "heading1",
+              "heading2",
+              "heading3"
+            ],
+            "allowed_blocks": [
+              "text",
+              "tables"
+            ],
+            "maximum_text_length": {
+              "applies_to": "characters",
+              "value": 50
+            }
+          },
+          {
+            "mode": "single",
+            "name": "test multi select",
+            "codename": "test_multi_select",
+            "type": "multiple_choice",
+            "is_required": true,
+            "options": [
+              {
+                "name": "test1",
+                "codename": "test1"
+              },
+              {
+                "name": "test2",
+                "codename": "test2"
+              },
+              {
+                "name": "test3",
+                "codename": "test3"
+              },
+              {
+                "name": "test4",
+                "codename": "test4"
+              }
+            ]
+          },
+          {
+            "name": "test numbers",
+            "codename": "test_numbers",
+            "type": "number",
+            "is_required": true
+          },
+          {
+            "name": "Bool-test",
+            "codename": "bool_test",
+            "type": "multiple_choice",
+            "is_required": true,
+            "mode": "single",
+            "options": [
+              {
+                "name": "True",
+                "codename": "true"
+              },
+              {
+                "name": "False",
+                "codename": "false"
+              }
+            ]
+          },
+          {
+            "name": "datetime-test",
+            "codename": "datetime_test",
+            "type": "date_time",
+            "is_required": true
+          }
+        ],
+        "snippets": [],
+        "groups": []
+      }
+    ]
+  },
+  {
+    "pageName": "test-four",
+    "codename": "test_four",
+    "pageTabs": [
+      {
+        "tabName": "Main",
+        "codeName": "main",
+        "pageElements": [
+          {
+            "name": "Title",
+            "codename": "title",
+            "type": "text",
+            "is_required": true,
+            "maximum_text_length": {
+              "applies_to": "characters",
+              "value": 50
+            },
+            "content_group": {
+              "external_id": "Main"
+            }
+          },
+          {
+            "name": "Description",
+            "codename": "description",
+            "type": "text",
+            "is_required": true,
+            "maximum_text_length": {
+              "applies_to": "characters",
+              "value": 50
+            },
+            "content_group": {
+              "external_id": "Main"
+            }
+          },
+          {
+            "name": "Keywords",
+            "codename": "keywords",
+            "type": "text",
+            "is_required": true,
+            "maximum_text_length": {
+              "applies_to": "characters",
+              "value": 50
+            },
+            "content_group": {
+              "external_id": "Main"
+            }
+          },
+          {
+            "name": "Search label",
+            "codename": "search_label",
+            "type": "text",
+            "is_required": true,
+            "maximum_text_length": {
+              "applies_to": "characters",
+              "value": 50
+            },
+            "content_group": {
+              "external_id": "Main"
+            }
+          },
+          {
+            "name": "Image ~ 1590x1060 / 3:2",
+            "codename": "image_1590x1060_3_2",
+            "type": "asset",
+            "is_required": true,
+            "content_group": {
+              "external_id": "Main"
+            }
+          },
+          {
+            "name": "Banner text",
+            "codename": "banner_text",
+            "type": "rich_text",
+            "is_required": true,
+            "allowed_table_formatting": [
+              "paragraph",
+              "strong",
+              "hyperlink"
+            ],
+            "allowed_blocks": [
+              "text",
+              "tables"
+            ],
+            "maximum_text_length": {
+              "applies_to": "characters",
+              "value": 50
+            },
+            "content_group": {
+              "external_id": "Main"
+            }
+          },
+          {
+            "name": "Show banner",
+            "codename": "show_banner",
+            "type": "multiple_choice",
+            "is_required": true,
+            "mode": "single",
+            "options": [
+              {
+                "name": "True",
+                "codename": "true"
+              },
+              {
+                "name": "False",
+                "codename": "false"
+              }
+            ],
+            "content_group": {
+              "external_id": "Main"
+            }
+          }
+        ],
+        "snippets": [
+          {
+            "name": "item_group",
+            "elements": [
+              {
+                "name": "Item",
+                "codename": "item",
+                "depends_on": {
+                  "element": {}
+                },
+                "type": "url_slug",
+                "is_required": true,
+                "content_group": {
+                  "external_id": "Main"
+                }
+              },
+              {
+                "name": "Title (optional)",
+                "codename": "title_optional",
+                "type": "text",
+                "is_required": true,
+                "maximum_text_length": {
+                  "applies_to": "characters",
+                  "value": 50
+                },
+                "content_group": {
+                  "external_id": "Main"
+                }
+              },
+              {
+                "name": "Title (optional)",
+                "codename": "title_optional",
+                "type": "text",
+                "is_required": true,
+                "maximum_text_length": {
+                  "applies_to": "characters",
+                  "value": 50
+                },
+                "content_group": {
+                  "external_id": "Main"
+                }
+              }
+            ]
+          }
+        ],
+        "groups": []
+      },
+      {
+        "tabName": "Journal",
+        "codeName": "journal",
+        "pageElements": [
+          {
+            "name": "Notes",
+            "codename": "notes",
+            "type": "text",
+            "is_required": true,
+            "maximum_text_length": {
+              "applies_to": "characters",
+              "value": 50
+            },
+            "content_group": {
+              "external_id": "Journal"
+            }
+          }
+        ],
+        "snippets": [
+          {
+            "name": "item_group",
+            "elements": [
+              {
+                "name": "Item",
+                "codename": "item",
+                "depends_on": {
+                  "element": {}
+                },
+                "type": "url_slug",
+                "is_required": true,
+                "content_group": {
+                  "external_id": "Journal"
+                }
+              },
+              {
+                "name": "Title",
+                "codename": "title",
+                "type": "text",
+                "is_required": true,
+                "maximum_text_length": {
+                  "applies_to": "characters",
+                  "value": 50
+                },
+                "content_group": {
+                  "external_id": "Journal"
+                }
+              },
+              {
+                "name": "Title (optional)",
+                "codename": "title_optional",
+                "type": "rich_text",
+                "is_required": true,
+                "allowed_table_formatting": [
+                  "heading2"
+                ],
+                "allowed_blocks": [
+                  "text",
+                  "tables"
+                ],
+                "maximum_text_length": {
+                  "applies_to": "characters",
+                  "value": 50
+                },
+                "content_group": {
+                  "external_id": "Journal"
+                }
+              }
+            ]
+          }
+        ],
+        "groups": [
+          {
+            "name": "change_log",
+            "elements": [
+              {
+                "name": "When",
+                "codename": "when",
+                "type": "date_time",
+                "is_required": true,
+                "content_group": {
+                  "external_id": "Journal"
+                }
+              },
+              {
+                "name": "What",
+                "codename": "what",
+                "type": "text",
+                "is_required": true,
+                "maximum_text_length": {
+                  "applies_to": "characters",
+                  "value": 50
+                },
+                "content_group": {
+                  "external_id": "Journal"
+                }
+              },
+              {
+                "name": "More info",
+                "codename": "more_info",
+                "depends_on": {
+                  "element": {}
+                },
+                "type": "url_slug",
+                "is_required": true,
+                "content_group": {
+                  "external_id": "Journal"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "pageName": "test-page",
+    "codename": "test_page",
+    "pageTabs": [
+      {
+        "tabName": "Main",
+        "codeName": "main",
+        "pageElements": [
+          {
+            "name": "page-title",
+            "codename": "page_title",
+            "type": "rich_text",
+            "is_required": true,
+            "allowed_table_formatting": [
+              "heading1",
+              "heading2",
+              "heading3",
+              "heading4",
+              "heading5",
+              "heading6"
+            ],
+            "allowed_blocks": [
+              "text",
+              "tables"
+            ],
+            "maximum_text_length": {
+              "applies_to": "characters",
+              "value": 50
+            }
+          },
+          {
+            "name": "page-paragrph",
+            "codename": "page_paragrph",
+            "type": "rich_text",
+            "is_required": true,
+            "allowed_table_formatting": [
+              "paragraph",
+              "heading1",
+              "heading2",
+              "heading3",
+              "heading4",
+              "heading5",
+              "em",
+              "hyperlink",
+              "list-item",
+              "o-list-item"
+            ],
+            "allowed_blocks": [
+              "text",
+              "tables"
+            ],
+            "maximum_text_length": {
+              "applies_to": "characters",
+              "value": 50
+            }
+          },
+          {
+            "name": "page-link",
+            "codename": "page_link",
+            "depends_on": {
+              "element": {}
+            },
+            "type": "url_slug",
+            "is_required": true
+          }
+        ],
+        "snippets": [],
+        "groups": []
+      }
+    ]
+  }
+]

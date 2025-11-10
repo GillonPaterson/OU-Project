@@ -1,13 +1,11 @@
 import {
 	createManagementClient,
-	ContentTypeElements,
 	ManagementClient,
 } from "@kontent-ai/management-sdk";
 import * as dotenv from "dotenv";
 import {
 	KontentPage,
 	ContentTypeElement,
-	KontentElementConfig,
 	KontentTab,
 	KontentCreateContentType,
 } from "../types/kontentTypes.ts";
@@ -34,6 +32,7 @@ export async function kontentPageBuilder(page: KontentPage, client: ManagementCl
 	const contentTypeResponse = await client
 		.addContentType()
 		.withData((builder) => {
+
 			if (page.pageTabs.length > 1) {
 				const contentGroups = buildCreateContentGroup(page.pageTabs);
 
@@ -83,17 +82,19 @@ export async function kontentPageBuilder(page: KontentPage, client: ManagementCl
  */
 function buildElement(
 	builder: any,
-	element: KontentElementConfig
+	element: ContentTypeElement
 ): ContentTypeElement {
 	switch (element.type) {
 		case ElementType.Text:
 			return builder.textElement(element);
 		case ElementType.RichText:
 			return builder.richTextElement(element);
-		case "asset":
+		case ElementType.Asset:
 			return builder.assetElement(element);
-		case "number":
+		case ElementType.Number:
 			return builder.numberElement(element);
+		case ElementType.MultipleChoice:
+			return builder.MultipleChoice(element);
 		default:
 			return builder.numberElement(element);
 	}

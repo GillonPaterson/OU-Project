@@ -1,25 +1,32 @@
 {
-  "Main": {
-    "page-title": {
-      "type": "StructuredText",
-      "config": {
-        "single": "heading1,heading2,heading3,heading4,heading5,heading6",
-        "label": "page-title"
-      }
-    },
-    "page-paragrph": {
-      "type": "StructuredText",
-      "config": {
-        "multi": "paragraph,heading1,heading2,heading3,heading4,heading5,em,hyperlink,list-item,o-list-item",
-        "label": "page-paragrph"
-      }
-    },
-    "page-link": {
-      "type": "Link",
-      "config": {
-        "label": "page-link",
-        "select": null
+  "id": "test-page",
+  "json": {
+    "Main": {
+      "page-title": {
+        "type": "StructuredText",
+        "config": {
+          "single": "heading1,heading2,heading3,heading4,heading5,heading6",
+          "label": "page-title"
+        }
+      },
+      "page-paragrph": {
+        "type": "StructuredText",
+        "config": {
+          "multi": "paragraph,heading1,heading2,heading3,heading4,heading5,em,hyperlink,list-item,o-list-item",
+          "label": "page-paragrph"
+        }
+      },
+      "page-link": {
+        "type": "Link",
+        "config": {
+          "label": "page-link",
+          "select": null
+        }
       }
     }
-  }
+  },
+  "label": "test-page",
+  "repeatable": false,
+  "status": true,
+  "format": "custom"
 }

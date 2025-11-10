@@ -1,7 +1,6 @@
 import axios from "axios";
-import { PrismicPage, PrismicResponse } from "./types/prismicTypes.ts";
+import { PrismicPage } from "./types/prismicTypes.ts";
 import { writeJsonToPrismic } from "./utils/logging.ts";
-import { kontentPageBuilder } from "./KontentAI/kontentAIPageBuilder.ts";
 import * as dotenv from "dotenv";
 import { ConvertPrismicElementsToKontentAI } from "./Prismic/prismicParser.ts";
 import { createKontentClient } from "./KontentAI/kontentAIClient.ts";
@@ -10,12 +9,16 @@ dotenv.config();
 const PRISMIC_REPO_NAME = process.env.PRISMIC_REPO_NAME;
 const PRISMIC_API_KEY = process.env.PRISMIC_ACCESS_TOKEN;
 const API_URL = `https://customtypes.prismic.io/customtypes`;
+import * as prismic from "@prismicio/client";
 
+if (!PRISMIC_REPO_NAME || !PRISMIC_API_KEY) {
+	throw new Error("Prismic EnVars Not Provided");
+}
 
 /* 
     Makes Prismic Call returns JSon of All Pages elements - Logs the Json to PrismicJsons Folder and returns the json
 */
-export async function fetchCustomTypes(): Promise<PrismicResponse> {
+export async function fetchCustomTypes(): Promise<PrismicPage[]> {
 	try {
 		const response = await axios.get(API_URL, {
 			headers: {
@@ -26,12 +29,12 @@ export async function fetchCustomTypes(): Promise<PrismicResponse> {
 
 		console.log("✅ Custom types fetched successfully!");
 
-		const data: PrismicResponse = response.data;
+		const data: PrismicPage[] = response.data;
 
 
 		console.log("✅ Logging Prismic Jsons");
 		data.forEach((page) => {
-			writeJsonToPrismic(page.id, page.json, "PrismicJsons");
+			writeJsonToPrismic(page.id, page, "PrismicJsons");
 		});
 		
 
@@ -47,24 +50,26 @@ export async function fetchCustomTypes(): Promise<PrismicResponse> {
 export async function migrateCustomTypes() {
 	const prismicPagesJson = await fetchCustomTypes();
 
-	const kontentMappedPages =
-		ConvertPrismicElementsToKontentAI(prismicPagesJson);
+	const kontentMappedPages = ConvertPrismicElementsToKontentAI(prismicPagesJson);
 
-	const kontentClient = createKontentClient();
+	console.log(kontentMappedPages)
+	writeJsonToPrismic("test", kontentMappedPages[2], "KontentAIJsons");
 
-	console.log("✅ Logging Mapped KontentAI Jsons");
-	kontentMappedPages.forEach((page) => {
-		writeJsonToPrismic(page.pageName, page.pageTabs, "KontentAIJsons");
-	});
+	// const kontentClient = createKontentClient();
+
+	// console.log("✅ Logging Mapped KontentAI Jsons");
+	// kontentMappedPages.forEach((page) => {
+	// 	writeJsonToPrismic(page.pageName, page.pageTabs, "KontentAIJsons");
+	// });
 
 	// Function Call to Write to KontentAI
-	kontentMappedPages.forEach(async (page) => {
-		try {
-			await kontentPageBuilder(page, kontentClient);
-		} catch (e) {
-			console.log("Something Went Wrong", e);
-		}
-	});
+	// kontentMappedPages.forEach(async (page) => {
+	// 	try {
+	// 		await kontentPageBuilder(page, kontentClient);
+	// 	} catch (e) {
+	// 		console.log("Something Went Wrong", e);
+	// 	}
+	// });
 }
 
 migrateCustomTypes();

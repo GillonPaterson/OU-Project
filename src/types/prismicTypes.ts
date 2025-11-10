@@ -1,87 +1,170 @@
-// Base type for any Prismic field
-export interface BasePrismicField {
-	type: string;
-	config: Record<string, any>;
-}
-
-export interface StructuredTextField extends BasePrismicField {
-	type: "StructuredText";
-	config: {
-		single?: string;
-		multi?: string;
-		label?: string;
-	};
-}
-
-export interface LinkField extends BasePrismicField {
-	type: "Link";
-	config: {
-		label?: string;
-		select?: "document" | "media" | "web" | null;
-	};
-}
-
-export interface ImageField extends BasePrismicField {
-	type: "Image";
-	config: {
-		label?: string;
-		constraint?: { width?: number; height?: number };
-	};
-}
-
-export interface BooleanField extends BasePrismicField {
-	type: "Boolean";
-	config: { label?: string };
-}
-
-export interface NumberField extends BasePrismicField {
-	type: "Number";
-	config: { label?: string };
-}
-
-export interface DateField extends BasePrismicField {
-	type: "Date" | "Timestamp";
-	config: { label?: string };
-}
-
-export interface SliceField extends BasePrismicField {
-	type: "Slice";
-	config: { label?: string; fields: Record<string, PrismicField> };
-}
-
-export type PrismicField =
-	| StructuredTextField
-	| LinkField
-	| ImageField
-	| BooleanField
-	| NumberField
-	| DateField
-	| SliceField;
-
-
-export interface PrismicResponse extends Array<PrismicPage> {}
-
+/** Root Type — represents a single Prismic Custom Type (a “Page”) */
 export interface PrismicPage {
 	id: string;
 	label: string;
 	repeatable: boolean;
 	status: boolean;
 	format: string;
-	json: PrismicTab[];
+	json: Record<string, PrismicTab>; // Tabs, e.g. "Main", "Journal"
 }
 
+/** A Prismic Tab — contains fields (elements) and possibly slices */
 export interface PrismicTab {
-	tabName: string;
-	components: PrismicComponent[];
+	[fieldKey: string]: PrismicElement | PrismicSliceZone;
 }
 
-export interface PrismicComponent {
-	type: string;
+/** A Prismic Slice Zone — a special field that holds slices */
+export interface PrismicSliceZone {
+	type: "Slices";
+	fieldset: string;
+	config: PrismicSliceZoneConfig;
+}
+
+/** Slice Zone configuration (labels and slice definitions) */
+export interface PrismicSliceZoneConfig {
+	labels?: Record<string, PrismicSliceLabel[]>;
+	choices: Record<string, PrismicSliceDefinition>;
+}
+
+/** A label option that can be applied to a slice */
+export interface PrismicSliceLabel {
+	display: string;
+	name: string;
+}
+
+/** A single slice type definition inside the slice zone */
+export interface PrismicSliceDefinition {
+	type: "Slice";
+	fieldset: string;
+	description?: string;
+	icon?: string;
+	display?: string;
+	nonRepeat: Record<string, PrismicElement>;
+	repeat: Record<string, PrismicElement>;
+}
+
+/** Core Element Type — all field types map to one of these */
+export type PrismicElement =
+	| PrismicTextField
+	| PrismicStructuredTextField
+	| PrismicNumberField
+	| PrismicBooleanField
+	| PrismicDateField
+	| PrismicColorField
+	| PrismicImageField
+	| PrismicLinkField
+	| PrismicGroupField;
+
+/** --- Primitive Field Definitions --- */
+
+export interface PrismicTextField {
+	type: "Text";
 	config: {
 		label: string;
-		single?: string;
-		multi?: string;
-		options?: string[];
-		select?: string | null;
+		useAsTitle?: boolean;
 	};
 }
+
+export interface PrismicStructuredTextField {
+	type: "StructuredText";
+	config: {
+		single?: string;
+		multi?: string;
+		label: string;
+	};
+}
+
+export interface PrismicNumberField {
+	type: "Number";
+	config: {
+		label: string;
+	};
+}
+
+export interface PrismicBooleanField {
+	type: "Boolean";
+	config: {
+		label: string;
+		default_value?: boolean;
+		placeholder_true?: string;
+		placeholder_false?: string;
+	};
+}
+
+export interface PrismicDateField {
+	type: "Date" | "Timestamp";
+	config: {
+		label: string;
+		default?: string;
+	};
+}
+
+export interface PrismicColorField {
+	type: "Color";
+	config: {
+		label: string;
+	};
+}
+
+export interface PrismicImageField {
+	type: "Image";
+	config: {
+		label: string;
+		constraint?: Record<string, unknown>;
+		thumbnails?: unknown[];
+	};
+}
+
+export interface PrismicLinkField {
+	type: "Link";
+	config: {
+		label: string;
+		select: string | null;
+		customtypes?: string[];
+	};
+}
+
+/** Groups are like repeatable field sets (not slices) */
+export interface PrismicGroupField {
+	type: "Group";
+	config: {
+		label: string;
+		fields: Record<string, PrismicElement>;
+	};
+}
+
+export interface MappedPrismicPage {
+	pageName: string;
+	codename: string;
+	tabs: MappedPrismicTab[];
+}
+
+export interface MappedPrismicTab {
+	tabName: string;
+	elements: MappedElement[];
+	slices: MappedSlice[];
+	groups: MappedGroup[];
+}
+
+export interface MappedElement {
+	key: string;
+	type: string;
+	label: string;
+	config?: Record<string, any>; // ← now carries config
+}
+
+export interface MappedSlice {
+	sliceName: string;
+	fieldset: string;
+	description?: string;
+	icon?: string;
+	display?: string;
+	elements: MappedElement[];
+}
+
+export interface MappedGroup {
+	groupName: string;
+	type: "Group"
+	elements: MappedElement[];
+}
+

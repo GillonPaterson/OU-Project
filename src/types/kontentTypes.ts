@@ -6,52 +6,15 @@ import {  } from "@kontent-ai/management-sdk";
 
 type KontentAIElementType = ElementModels.ElementType;
 
-export type ContentTypeElement =
+export type KontentTypeElement =
 	| ContentTypeElements.ITextElement
 	| ContentTypeElements.IRichTextElement
 	| ContentTypeElements.IAssetElement
-	| ContentTypeElements.INumberElement;
-
-export type KontentElementConfig =
-	| KontentTextElementConfig
-	| KontentRichTextElementConfig
-	| KontentMultipleChoiceElementConfig
-	| KontentUrlSlugElementConfig
-	| KontentNumberElementConfig;
-
-
-interface KontentBaseElementConfig {
-	name: string;
-	codename: string;
-	type: KontentAIElementType;
-	is_required: boolean;
-	content_group?: {
-		external_id: string;
-	};
-}
-
-export interface KontentTextElementConfig extends KontentBaseElementConfig {
-	maximum_text_length: {
-		applies_to: string;
-		value: number;
-	};
-}
-
-export interface KontentNumberElementConfig extends KontentBaseElementConfig {}
-
-export interface KontentRichTextElementConfig extends KontentTextElementConfig {
-	allowed_table_formatting: string[];
-	allowed_blocks: string[];
-}
-
-export interface KontentMultipleChoiceElementConfig
-	extends KontentBaseElementConfig {
-	options: string[];
-}
-
-export interface KontentUrlSlugElementConfig extends KontentBaseElementConfig {
-	value: string | null | undefined;
-}
+	| ContentTypeElements.INumberElement
+	| ContentTypeElements.IMultipleChoiceElement
+	| ContentTypeElements.IUrlSlugElement
+	| ContentTypeElements.IDateTimeElement
+	| ContentTypeElements.ISnippetElement
 
 export interface KontentPage {
 	pageName: string;
@@ -62,7 +25,9 @@ export interface KontentPage {
 export interface KontentTab {
 	tabName: string;
 	codeName: string;
-	pageElements: KontentElementConfig[];
+	pageElements: KontentTypeElement[];
+	snippets?: KontentSnippetData[];
+	groups?: KontentGroupData[];
 }
 
 export interface KontentCreateContentType extends Array<CreateContentType> {}
@@ -72,3 +37,13 @@ export interface CreateContentType {
 	codename: string,
 	external_id?: string
 }
+
+export interface KontentGroupData {
+	name: string;
+	elements: KontentTypeElement[];
+}
+export interface KontentSnippetData {
+	name: string;
+	elements: KontentTypeElement[];
+}
+

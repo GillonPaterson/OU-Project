@@ -1,0 +1,185 @@
+{
+  "id": "test-four",
+  "json": {
+    "Main": {
+      "title": {
+        "type": "Text",
+        "config": {
+          "label": "Title"
+        }
+      },
+      "description": {
+        "type": "Text",
+        "config": {
+          "label": "Description"
+        }
+      },
+      "keywords": {
+        "type": "Text",
+        "config": {
+          "label": "Keywords"
+        }
+      },
+      "search_label": {
+        "type": "Text",
+        "config": {
+          "label": "Search label"
+        }
+      },
+      "image": {
+        "type": "Image",
+        "config": {
+          "constraint": {},
+          "thumbnails": [],
+          "label": "Image ~ 1590x1060 / 3:2"
+        }
+      },
+      "banner_text": {
+        "type": "StructuredText",
+        "config": {
+          "single": "paragraph,strong,hyperlink",
+          "label": "Banner text"
+        }
+      },
+      "banner_enabled": {
+        "type": "Boolean",
+        "config": {
+          "placeholder_false": "No",
+          "placeholder_true": "Yes",
+          "default_value": false,
+          "label": "Show banner"
+        }
+      },
+      "body": {
+        "type": "Slices",
+        "fieldset": "Slice zone",
+        "config": {
+          "labels": {},
+          "choices": {
+            "item_group": {
+              "type": "Slice",
+              "fieldset": "Item Group",
+              "description": "A group of items with an optional title",
+              "icon": "playlist_add",
+              "display": "list",
+              "non-repeat": {
+                "item_group_title": {
+                  "type": "Text",
+                  "config": {
+                    "label": "Title (optional)"
+                  }
+                }
+              },
+              "repeat": {
+                "item_group_document": {
+                  "type": "Link",
+                  "config": {
+                    "select": "document",
+                    "customtypes": [
+                      "help_article",
+                      "help_article_group",
+                      "help_collection",
+                      "help_external_link"
+                    ],
+                    "label": "Item"
+                  }
+                },
+                "item_group_title": {
+                  "type": "Text",
+                  "config": {
+                    "label": "Title (optional)"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Journal": {
+      "notes": {
+        "type": "Text",
+        "config": {
+          "label": "Notes"
+        }
+      },
+      "change_log": {
+        "type": "Group",
+        "config": {
+          "fields": {
+            "change_when": {
+              "type": "Timestamp",
+              "config": {
+                "default": "now",
+                "label": "When"
+              }
+            },
+            "change_what": {
+              "type": "Text",
+              "config": {
+                "label": "What"
+              }
+            },
+            "change_more_info": {
+              "type": "Link",
+              "config": {
+                "label": "More info",
+                "select": null
+              }
+            }
+          },
+          "label": "Change log"
+        }
+      },
+      "body1": {
+        "type": "Slices",
+        "fieldset": "Slice zone",
+        "config": {
+          "labels": {},
+          "choices": {
+            "item_group": {
+              "type": "Slice",
+              "fieldset": "Item Group",
+              "description": "A group of items with an optional title",
+              "icon": "playlist_add",
+              "display": "list",
+              "non-repeat": {
+                "item_group_title": {
+                  "type": "StructuredText",
+                  "config": {
+                    "single": "heading2",
+                    "label": "Title (optional)"
+                  }
+                }
+              },
+              "repeat": {
+                "item_group_item": {
+                  "type": "Link",
+                  "config": {
+                    "select": "document",
+                    "customtypes": [
+                      "collection",
+                      "article",
+                      "article_group"
+                    ],
+                    "label": "Item"
+                  }
+                },
+                "item_group_title": {
+                  "type": "Text",
+                  "config": {
+                    "label": "Title"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "label": "test-four",
+  "repeatable": true,
+  "status": true,
+  "format": "custom"
+}

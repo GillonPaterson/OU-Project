@@ -1,23 +1,22 @@
-import { PrismicComponent } from "../types/prismicTypes.ts";
-import {
-	KontentTextElementConfig,
-	KontentRichTextElementConfig,
-	KontentMultipleChoiceElementConfig,
-	KontentUrlSlugElementConfig,
-	KontentNumberElementConfig
-} from "../types/kontentTypes.ts";
+import { ContentTypeElements } from "@kontent-ai/management-sdk";
+import { MappedElement } from "../types/prismicTypes";
 
 
 /**
  * Builders for common Prismic -> Kontent element translations.
- * Each function accepts a PrismicComponent and returns a KontentElement.
+ * Each function accepts a MappedElement and returns a KontentElement.
  * Each function also accepts a contentGroup that is only mapped if it is set - This is for pages with multiple tabs in Prismic
  */
 
 export function buildTextElement(
-	component: PrismicComponent,
+	component: MappedElement,
 	contentGroup?: string
-): KontentTextElementConfig {
+): ContentTypeElements.ITextElement {
+
+	if (!component.config) {
+		throw new Error("Config Not Found - Building Text Element");
+	}
+
 	return {
 		name: component.config.label,
 		codename: toPrismicApiKey(component.config.label),
@@ -32,15 +31,149 @@ export function buildTextElement(
 					content_group: {
 						external_id: contentGroup,
 					},
-			  }
+			}
 			: {}),
 	};
 }
 
-export function buildNumberElement(
-	component: PrismicComponent,
+export function buildBooleanElement(
+	component: MappedElement,
 	contentGroup?: string
-): KontentNumberElementConfig {
+): ContentTypeElements.IMultipleChoiceElement {
+
+	if (!component.config) {
+		throw new Error("Config Not Found - Building Text Element");
+	}
+
+	return {
+		name: component.config.label,
+		codename: toPrismicApiKey(component.config.label),
+		type: "multiple_choice",
+		is_required: true,
+		mode: "single",
+		options: [
+			{
+				name: "True",
+				codename: "true",
+			},
+			{
+				name: "False",
+				codename: "false",
+			},
+		],
+		...(contentGroup
+			? {
+					content_group: {
+						external_id: contentGroup,
+					},
+		}
+			: {}),
+	};
+}
+
+export function buildAssetElement(
+	component: MappedElement,
+	contentGroup?: string
+): ContentTypeElements.IAssetElement {
+
+	if (!component.config) {
+		throw new Error("Config Not Found - Building Text Element");
+	}
+
+	return {
+		name: component.config.label,
+		codename: toPrismicApiKey(component.config.label),
+		type: "asset",
+		is_required: true,
+		allowed_file_types:  "any",
+		...(contentGroup
+			? {
+					content_group: {
+						external_id: contentGroup,
+					},
+			}
+			: {}),
+	};
+}
+
+export function buildDateTimeElement(
+	component: MappedElement,
+	contentGroup?: string
+): ContentTypeElements.IDateTimeElement {
+
+	if (!component.config) {
+		throw new Error("Config Not Found - Building Text Element");
+	}
+
+	return {
+		name: component.config.label,
+		codename: toPrismicApiKey(component.config.label),
+		type: "date_time",
+		is_required: true,
+		...(contentGroup
+			? {
+					content_group: {
+						external_id: contentGroup,
+					},
+			}
+			: {}),
+	};
+}
+
+export function buildImageElement(
+	component: MappedElement,
+	contentGroup?: string
+): ContentTypeElements.IAssetElement {
+
+	if (!component.config) {
+		throw new Error("Config Not Found - Building Text Element");
+	}
+
+	return {
+		name: component.config.label,
+		codename: toPrismicApiKey(component.config.label),
+		type: "asset",
+		is_required: true,
+		...(contentGroup
+			? {
+					content_group: {
+						external_id: contentGroup,
+					},
+			}
+			: {}),
+	};
+}
+
+
+// export function buildTaxonomyElement(
+// 	component: MappedElement,
+// 	contentGroup?: string
+// ): ContentTypeElements.ITaxonomyElement {
+// 	return {
+// 		name: component.config.label,
+// 		codename: toPrismicApiKey(component.config.label),
+// 		type: "taxonomy",
+// 		is_required: true,
+// 		taxonomy_group: component.config.taxonomy_group || "",
+// 		...(contentGroup
+// 			? {
+// 					content_group: {
+// 						external_id: contentGroup,
+// 					},
+// 			}
+// 			: {}),
+// 	};
+// }
+
+export function buildNumberElement(
+	component: MappedElement,
+	contentGroup?: string
+): ContentTypeElements.INumberElement {
+
+	if (!component.config) {
+		throw new Error("Config Not Found - Building Text Element");
+	}
+
 	return {
 		name: component.config.label,
 		codename: toPrismicApiKey(component.config.label),
@@ -57,10 +190,14 @@ export function buildNumberElement(
 }
 
 export function buildStructuredTextElement(
-	component: PrismicComponent,
+	component: MappedElement,
 	contentGroup?: string
-): KontentRichTextElementConfig {
+): ContentTypeElements.IRichTextElement {
 	let table_format: Array<string> = [];
+
+	if (!component.config) {
+		throw new Error("Config Not Found - Building Text Element");
+	}
 
 	if (component.config.single) {
 		table_format = component.config.single.split(",");
@@ -72,7 +209,7 @@ export function buildStructuredTextElement(
 		codename: toPrismicApiKey(component.config.label),
 		type: "rich_text",
 		is_required: true,
-		allowed_table_formatting: table_format,
+		allowed_table_formatting: table_format as ContentTypeElements.RichTextAllowedFormatting[],
 		allowed_blocks: ["text", "tables"],
 		maximum_text_length: {
 			applies_to: "characters",
@@ -89,19 +226,21 @@ export function buildStructuredTextElement(
 }
 
 export function buildSelectElement(
-	component: PrismicComponent,
+	component: MappedElement,
 	contentGroup?: string
-): KontentMultipleChoiceElementConfig {
-	if (!component.config.options) {
-		throw new Error("Config Options Not Found - Building Select Element");
+): ContentTypeElements.IMultipleChoiceElement {
+
+	if (!component.config) {
+		throw new Error("Config Not Found - Building Text Element");
 	}
 
 	return {
+		mode: "single",
 		name: component.config.label,
 		codename: toPrismicApiKey(component.config.label),
-		type: "text",
+		type: "multiple_choice",
 		is_required: true,
-		options: component.config.options,
+		options: component.config.options.map((option: string) => {return mapToSelectOption(option)}),
 		...(contentGroup
 			? {
 					content_group: {
@@ -113,15 +252,23 @@ export function buildSelectElement(
 }
 
 export function buildLinkElement(
-	component: PrismicComponent,
+	component: MappedElement,
 	contentGroup?: string
-): KontentUrlSlugElementConfig {
+): ContentTypeElements.IUrlSlugElement {
+
+	if (!component.config) {
+		throw new Error("Config Not Found - Building Text Element");
+	}
+	
 	return {
 		name: component.config.label,
 		codename: toPrismicApiKey(component.config.label),
+		depends_on: {
+			// TODO: Figure out how to map this properly from Prismic Link types
+			element: {},
+		},
 		type: "url_slug",
 		is_required: true,
-		value: component.config.select,
 		...(contentGroup
 			? {
 					content_group: {
@@ -142,4 +289,13 @@ export function toPrismicApiKey(fieldName: string): string {
 	const trimmed = sanitized.replace(/^_+|_+$/g, "");
 
 	return trimmed;
+}
+
+function mapToSelectOption(
+	optionName: string
+): ContentTypeElements.IMultipleChoiceOption {
+	return {
+		name: optionName,
+		codename: toPrismicApiKey(optionName),
+	};
 }
