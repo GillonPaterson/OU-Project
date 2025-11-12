@@ -1,10 +1,7 @@
 import type {
 	ContentTypeElements,
-	ElementModels,
 } from "@kontent-ai/management-sdk";
 import {  } from "@kontent-ai/management-sdk";
-
-type KontentAIElementType = ElementModels.ElementType;
 
 export type KontentTypeElement =
 	| ContentTypeElements.ITextElement
@@ -25,9 +22,22 @@ export interface KontentPage {
 export interface KontentTab {
 	tabName: string;
 	codeName: string;
-	pageElements: KontentTypeElement[];
-	snippets?: KontentSnippetData[];
-	groups?: KontentGroupData[];
+	pageElements: MappedKontentElement[];
+}
+
+export type MappedKontentElement =
+	| {
+		type: KontentElementType.Element;
+		element: KontentTypeElement;
+	}
+	| {
+		type: KontentElementType.Snippet;
+		element: KontentSnippetData;
+	}
+
+export enum KontentElementType {
+	Element = "Element",
+	Snippet = "Snippet",
 }
 
 export interface KontentCreateContentType extends Array<CreateContentType> {}
@@ -38,12 +48,9 @@ export interface CreateContentType {
 	external_id?: string
 }
 
-export interface KontentGroupData {
-	name: string;
-	elements: KontentTypeElement[];
-}
 export interface KontentSnippetData {
 	name: string;
+	snippetID?: string;
 	elements: KontentTypeElement[];
 }
 

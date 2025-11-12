@@ -1,38 +1,32 @@
-/** Root Type — represents a single Prismic Custom Type (a “Page”) */
 export interface PrismicPage {
 	id: string;
 	label: string;
 	repeatable: boolean;
 	status: boolean;
 	format: string;
-	json: Record<string, PrismicTab>; // Tabs, e.g. "Main", "Journal"
+	json: Record<string, PrismicTab>;
 }
 
-/** A Prismic Tab — contains fields (elements) and possibly slices */
 export interface PrismicTab {
 	[fieldKey: string]: PrismicElement | PrismicSliceZone;
 }
 
-/** A Prismic Slice Zone — a special field that holds slices */
 export interface PrismicSliceZone {
 	type: "Slices";
 	fieldset: string;
 	config: PrismicSliceZoneConfig;
 }
 
-/** Slice Zone configuration (labels and slice definitions) */
 export interface PrismicSliceZoneConfig {
 	labels?: Record<string, PrismicSliceLabel[]>;
 	choices: Record<string, PrismicSliceDefinition>;
 }
 
-/** A label option that can be applied to a slice */
 export interface PrismicSliceLabel {
 	display: string;
 	name: string;
 }
 
-/** A single slice type definition inside the slice zone */
 export interface PrismicSliceDefinition {
 	type: "Slice";
 	fieldset: string;
@@ -43,7 +37,6 @@ export interface PrismicSliceDefinition {
 	repeat: Record<string, PrismicElement>;
 }
 
-/** Core Element Type — all field types map to one of these */
 export type PrismicElement =
 	| PrismicTextField
 	| PrismicStructuredTextField
@@ -54,8 +47,6 @@ export type PrismicElement =
 	| PrismicImageField
 	| PrismicLinkField
 	| PrismicGroupField;
-
-/** --- Primitive Field Definitions --- */
 
 export interface PrismicTextField {
 	type: "Text";
@@ -141,16 +132,35 @@ export interface MappedPrismicPage {
 
 export interface MappedPrismicTab {
 	tabName: string;
-	elements: MappedElement[];
-	slices: MappedSlice[];
-	groups: MappedGroup[];
+	depends_on: string
+	elements: MappedPrismicElement[];
+}
+
+export type MappedPrismicElement =
+	| {
+			type: MappedElementType.Element;
+			element: MappedElement;
+	}
+	| {
+			type: MappedElementType.Slice;
+			element: MappedSlice;
+	}
+	| {
+			type: MappedElementType.Group;
+			element: MappedGroup;
+	};
+
+export enum MappedElementType {
+	Element = "Element",
+	Slice = "Slice",
+	Group = "Group",
 }
 
 export interface MappedElement {
 	key: string;
 	type: string;
 	label: string;
-	config?: Record<string, any>; // ← now carries config
+	config?: Record<string, any>;
 }
 
 export interface MappedSlice {

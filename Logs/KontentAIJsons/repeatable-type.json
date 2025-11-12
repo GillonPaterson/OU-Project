@@ -1,0 +1,96 @@
+{
+  "pageName": "repeatable-type",
+  "codename": "repeatable_type",
+  "pageTabs": [
+    {
+      "tabName": "Main",
+      "codeName": "main",
+      "pageElements": [
+        {
+          "type": "Element",
+          "element": {
+            "name": "test title",
+            "codename": "test_title",
+            "type": "rich_text",
+            "is_required": true,
+            "allowed_table_formatting": [],
+            "allowed_blocks": [
+              "text",
+              "tables"
+            ],
+            "maximum_text_length": {
+              "applies_to": "characters",
+              "value": 50
+            }
+          }
+        },
+        {
+          "type": "Element",
+          "element": {
+            "mode": "single",
+            "name": "test multi select",
+            "codename": "test_multi_select",
+            "type": "multiple_choice",
+            "is_required": true,
+            "options": [
+              {
+                "name": "test1",
+                "codename": "test1"
+              },
+              {
+                "name": "test2",
+                "codename": "test2"
+              },
+              {
+                "name": "test3",
+                "codename": "test3"
+              },
+              {
+                "name": "test4",
+                "codename": "test4"
+              }
+            ]
+          }
+        },
+        {
+          "type": "Element",
+          "element": {
+            "name": "test numbers",
+            "codename": "test_numbers",
+            "type": "number",
+            "is_required": true
+          }
+        },
+        {
+          "type": "Element",
+          "element": {
+            "name": "Bool-test",
+            "codename": "bool_test",
+            "type": "multiple_choice",
+            "is_required": true,
+            "mode": "single",
+            "options": [
+              {
+                "name": "True",
+                "codename": "true"
+              },
+              {
+                "name": "False",
+                "codename": "false"
+              }
+            ]
+          }
+        },
+        {
+          "type": "Element",
+          "element": {
+            "name": "datetime-test",
+            "codename": "datetime_test",
+            "type": "date_time",
+            "is_required": true
+          }
+        }
+      ]
+    }
+  ]
+}

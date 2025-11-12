@@ -144,27 +144,6 @@ export function buildImageElement(
 	};
 }
 
-
-// export function buildTaxonomyElement(
-// 	component: MappedElement,
-// 	contentGroup?: string
-// ): ContentTypeElements.ITaxonomyElement {
-// 	return {
-// 		name: component.config.label,
-// 		codename: toPrismicApiKey(component.config.label),
-// 		type: "taxonomy",
-// 		is_required: true,
-// 		taxonomy_group: component.config.taxonomy_group || "",
-// 		...(contentGroup
-// 			? {
-// 					content_group: {
-// 						external_id: contentGroup,
-// 					},
-// 			}
-// 			: {}),
-// 	};
-// }
-
 export function buildNumberElement(
 	component: MappedElement,
 	contentGroup?: string
@@ -209,7 +188,8 @@ export function buildStructuredTextElement(
 		codename: toPrismicApiKey(component.config.label),
 		type: "rich_text",
 		is_required: true,
-		allowed_table_formatting: table_format as ContentTypeElements.RichTextAllowedFormatting[],
+		// allowed_table_formatting: table_format as ContentTypeElements.RichTextAllowedFormatting[],
+		allowed_table_formatting: [],
 		allowed_blocks: ["text", "tables"],
 		maximum_text_length: {
 			applies_to: "characters",
@@ -253,6 +233,7 @@ export function buildSelectElement(
 
 export function buildLinkElement(
 	component: MappedElement,
+	depends_on?: string,
 	contentGroup?: string
 ): ContentTypeElements.IUrlSlugElement {
 
@@ -264,8 +245,9 @@ export function buildLinkElement(
 		name: component.config.label,
 		codename: toPrismicApiKey(component.config.label),
 		depends_on: {
-			// TODO: Figure out how to map this properly from Prismic Link types
-			element: {},
+			element: {
+				codename: depends_on,
+			},
 		},
 		type: "url_slug",
 		is_required: true,

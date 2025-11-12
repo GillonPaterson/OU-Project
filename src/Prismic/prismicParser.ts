@@ -1,53 +1,53 @@
 import { buildBooleanElement, buildDateTimeElement, buildImageElement, buildLinkElement, buildNumberElement, buildSelectElement, buildStructuredTextElement, buildTextElement, toPrismicApiKey } from "../KontentAI/kontentElementBuilders.js";
-import { KontentGroupData, KontentPage, KontentSnippetData, KontentTab, KontentTypeElement } from "../types/kontentTypes.js";
+import { KontentElementType, KontentPage, KontentTab, KontentTypeElement, MappedKontentElement } from "../types/kontentTypes.js";
 import {
 	MappedElement,
-	MappedGroup,
+	MappedElementType,
+	MappedPrismicElement,
 	MappedPrismicPage,
 	MappedPrismicTab,
 	MappedSlice,
 	PrismicElement,
-	PrismicGroupField,
 	PrismicPage,
 	PrismicSliceDefinition,
-	PrismicSliceZone,
-} from "../types/prismicTypes";
+	PrismicTab,
+} from "../types/prismicTypes.js";
 import { writeJsonToPrismic } from "../utils/logging.js";
 
 export function mapPrismicPageToStructuredLayout(
 	page: PrismicPage
-): MappedPrismicPage {
+): MappedPrismicPage  {
 	const tabs: MappedPrismicTab[] = [];
 
 	for (const [tabName, tabContent] of Object.entries(page.json)) {
 		const mappedTab: MappedPrismicTab = {
 			tabName,
-			elements: [],
-			slices: [],
-			groups: [],
+			depends_on: "",
+			elements: []
 		};
 
 		for (const [fieldKey, fieldValue] of Object.entries(tabContent)) {
-			if (isSliceZone(fieldValue)) {
-				// Handle slices
+			if (fieldValue.type == "Slices") {
 				for (const [sliceName, sliceDef] of Object.entries(
 					fieldValue.config.choices
 				)) {
-					mappedTab.slices.push(mapSliceDefinition(sliceName, sliceDef));
+					mappedTab.elements.push(mapSliceDefinition(toPrismicApiKey(sliceDef.fieldset), sliceDef));
 				}
-			} else if (isGroupComponent(fieldValue)) {
-				console.log("here");
-				mappedTab.groups.push(mapGroupDefinition(fieldKey, fieldValue));
+			} else if (fieldValue.type == "Group") {
+				mappedTab.elements.push(mapGroupDefinition(fieldKey, fieldValue));
 			} else {
 				mappedTab.elements.push({
-					key: fieldKey,
-					type: fieldValue.type,
-					label: fieldValue.config?.label || "",
-					config: fieldValue.config || {},
+					type: MappedElementType.Element,
+					element: {
+						key: fieldKey,
+						type: fieldValue.type,
+						label: fieldValue.config?.label || "",
+						config: fieldValue.config || {},
+					},
 				});
 			}
 		}
-
+		mappedTab.depends_on = setDependsOn(mappedTab);
 		tabs.push(mappedTab);
 	}
 
@@ -58,15 +58,18 @@ export function mapPrismicPageToStructuredLayout(
 	};
 }
 
-function isSliceZone(field: any): field is PrismicSliceZone {
-	return field?.type === "Slices" && !!field.config?.choices;
+function setDependsOn(tab: MappedPrismicTab) {
+	for (const element of tab.elements) {
+		if (element.type === MappedElementType.Element) {
+			return toPrismicApiKey(element.element.label);
+		}
+	}
+	
+	throw new Error("No Element Found to base Link on")
 }
 
-function isGroupComponent(field: any): field is PrismicGroupField {
-	return field?.type === "Group"
-}
 
-function mapSliceDefinition(sliceName: string, sliceDef: any): MappedSlice {
+function mapSliceDefinition(sliceName: string, sliceDef: any): MappedPrismicElement {
 	const nonRepeatObj = sliceDef["non-repeat"] || sliceDef.nonRepeat || {};
 	const repeatObj = sliceDef.repeat || {};
 
@@ -87,20 +90,22 @@ function mapSliceDefinition(sliceName: string, sliceDef: any): MappedSlice {
 	}));
 
 	return {
-		sliceName,
-		fieldset: sliceDef.fieldset,
-		description: sliceDef.description,
-		icon: sliceDef.icon,
-		display: sliceDef.display,
-		elements: [...repeat, ...nonRepeat],
+		type: MappedElementType.Slice,
+		element: {
+			sliceName,
+			fieldset: sliceDef.fieldset,
+			description: sliceDef.description,
+			icon: sliceDef.icon,
+			display: sliceDef.display,
+			elements: [...repeat, ...nonRepeat],
+		},
 	};
 }
 
 function mapGroupDefinition(
 	groupName: string,
 	groupDef: any
-): MappedGroup {
-
+): MappedPrismicElement {
 	const mappedElements: MappedElement[] = [];
 
 	for (const [elementName, elementDef] of Object.entries(
@@ -115,9 +120,12 @@ function mapGroupDefinition(
 	}
 
 	return {
-		groupName: groupName,
-		type: groupDef.type,
-		elements: mappedElements,
+		type: MappedElementType.Group,
+		element: {
+			groupName: groupName,
+			type: groupDef.type,
+			elements: mappedElements,
+		},
 	};
 }
 
@@ -129,118 +137,150 @@ function mapGroupDefinition(
  */
 
 export function mapPrismicPagesToKontentPages(
-	prismicPages: MappedPrismicPage[],
-): KontentPage[] {
+	prismicPage: MappedPrismicPage,
+) : KontentPage {
 	
-	const KontentPages: KontentPage[] = prismicPages.map((prismicPage) => {
-
 		const kontentTabs: KontentTab[] = prismicPage.tabs.map((tab) => {
 
 			if (prismicPage.tabs.length > 1) {
 
-				const kontentElements: KontentTypeElement[] = tab.elements.map((element) => {
-					return mapPrismicFieldToKontent(element, tab.tabName);
-				});
+				const kontentTabElements: MappedKontentElement[] = []
 
-				const kontentSnippets: KontentSnippetData[] = tab.slices.map((slice) => {
-						const kontentElements = slice.elements.map((element) => {
-							return mapPrismicFieldToKontent(element, tab.tabName);
-						})
+				tab.elements.map((element) => {
 
-						return {
-							name: slice.sliceName,
-							elements: kontentElements
-						}
-					}
-				);
-
-				const kontentGroups: KontentGroupData[] = tab.groups.map((group) => {
-					const kontentGroupElements = group.elements.map(element => {
-						return mapPrismicFieldToKontent(element, tab.tabName);
-					});
-
-					return {
-						name: group.groupName,
-						elements: kontentGroupElements,
-					};
-				});
-
-				return {
-					tabName: tab.tabName,
-					codeName: toPrismicApiKey(tab.tabName),
-					pageElements: kontentElements,
-					snippets: kontentSnippets,
-					groups: kontentGroups,
-				};
-
-
-
-			} else {
-
-				const kontentElements: KontentTypeElement[] = tab.elements.map(
-					(element) => {
-						return mapPrismicFieldToKontent(element);
-					}
-				);
-
-				const kontentSnippets: KontentSnippetData[] = tab.slices.map(
-					(slice) => {
-						const kontentElements = slice.elements.map((element) => {
-							return mapPrismicFieldToKontent(element);
+					if (element.type == MappedElementType.Group) {
+						const groupElements: KontentTypeElement[] = element.element.elements.map(element => {
+							return mapPrismicFieldToKontent(
+								element,
+								tab.depends_on
+							);
 						});
 
-						return {
-							name: slice.sliceName,
-							elements: kontentElements,
-						};
-					}
-				);
-
-				const kontentGroups: KontentGroupData[] = tab.groups.map(
-					(group) => {
-						const kontentGroupElements = group.elements.map(
-							(element) => {
-								return mapPrismicFieldToKontent(element);
+						kontentTabElements.push({
+							type: KontentElementType.Snippet,
+							element: {
+								name: element.element.groupName,
+								elements: groupElements
 							}
-						);
+						})
+					} else if (element.type == MappedElementType.Slice) {
+						const sliceElements: KontentTypeElement[] =element.element.elements.map(element => {
+							return mapPrismicFieldToKontent(element, tab.depends_on)
+						});
 
-						return {
-							name: group.groupName,
-							elements: kontentGroupElements,
-						};
+						kontentTabElements.push({
+							type: KontentElementType.Snippet,
+							element: {
+								name: element.element.sliceName,
+								elements: sliceElements,
+							},
+						});
+
+					} else {
+						kontentTabElements.push({
+							type: KontentElementType.Element,
+							element: mapPrismicFieldToKontent(element.element, tab.depends_on, tab.tabName)
+						});
 					}
-				);
+				})
 
 				return {
 					tabName: tab.tabName,
 					codeName: toPrismicApiKey(tab.tabName),
-					pageElements: kontentElements,
-					snippets: kontentSnippets,
-					groups: kontentGroups,
+					pageElements: kontentTabElements,
 				};
+			} else {
+				const kontentTabElements: MappedKontentElement[] = [];
 
+				tab.elements.map((element) => {
+					if (element.type == MappedElementType.Group) {
+						const slice_depends_on = findSnippetDependsOn(element);
 
+						const groupElements: KontentTypeElement[] =
+							element.element.elements.map((element) => {
+								return mapPrismicFieldToKontent(element, slice_depends_on);
+							});
+
+						kontentTabElements.push({
+							type: KontentElementType.Snippet,
+							element: {
+								name: element.element.groupName,
+								elements: groupElements,
+							},
+						});
+					} else if (element.type == MappedElementType.Slice) {
+						const slice_depends_on = findSnippetDependsOn(element);
+
+						const sliceElements: KontentTypeElement[] =
+							element.element.elements.map((element) => {
+								return mapPrismicFieldToKontent(element, slice_depends_on);
+							});
+
+						kontentTabElements.push({
+							type: KontentElementType.Snippet,
+							element: {
+								name: element.element.sliceName,
+								elements: sliceElements,
+							},
+						});
+					} else {
+						kontentTabElements.push({
+							type: KontentElementType.Element,
+							element: mapPrismicFieldToKontent(
+								element.element,
+								tab.depends_on
+							),
+						});
+					}
+				});
+
+				return {
+					tabName: tab.tabName,
+					codeName: toPrismicApiKey(tab.tabName),
+					pageElements: kontentTabElements,
+				};
 			}
-
 		})
 
 		return {
 			pageName: prismicPage.pageName,
-			codename: prismicPage.codename,
+			codename: toPrismicApiKey(prismicPage.pageName),
 			pageTabs: kontentTabs,
-		}
-
-	})
-
-	return KontentPages;
+		};
 }
 
+function findSnippetDependsOn(snippet: MappedPrismicElement): string {
+	switch (snippet.type) {
+		case MappedElementType.Slice:
+		case MappedElementType.Group: {
+			const elements = Object.values(
+				snippet.element.elements
+			) as MappedElement[];
+
+			for (const element of elements) {
+				if (element.type !== "Link") {
+					return toPrismicApiKey(element.label);
+				}
+			}
+
+			throw new Error(
+				`No element to depend on for link in ${snippet.type}: ${snippet}`
+			);
+		}
+
+		default:
+			throw new Error(
+				`findSliceDependsOn called with unsupported type: ${snippet.type}`
+			);
+	}
+}
 
 // /**
 //   *Accepts a single Prismic Component and routes it to the relevant function to return a Kontent Component
 // */ 
 function mapPrismicFieldToKontent(
 	component: MappedElement,
+	depends_on: string,
 	contentGroup?: string
 ): KontentTypeElement {
 
@@ -254,7 +294,7 @@ function mapPrismicFieldToKontent(
 		case "Number":
 			return buildNumberElement(component, contentGroup);
 		case "Link":
-			return buildLinkElement(component, contentGroup);
+			return buildLinkElement(component, depends_on, contentGroup);
 		case "Boolean":
 			return buildBooleanElement(component, contentGroup);
 		case "Image":
@@ -270,24 +310,19 @@ function mapPrismicFieldToKontent(
 	}
 }
 
-
-
-
-
 /**
   *Function to call supporting functions in here, Accepts PrismicResponse and return the KontentPages
 */ 
-export function ConvertPrismicElementsToKontentAI(prismicPages: PrismicPage[]): KontentPage[] {
-	
-	const structuredPrismicPage: MappedPrismicPage[] = prismicPages.map(page => {
-		return mapPrismicPageToStructuredLayout(page)
-	})
+export function ConvertPrismicPageToKontentPage(
+	prismicPage: PrismicPage
+): KontentPage {
+	const structuredPrismicPage: MappedPrismicPage = mapPrismicPageToStructuredLayout(prismicPage);
 
+	const kontentPage: KontentPage = mapPrismicPagesToKontentPages(
+		structuredPrismicPage
+	);
 
+	writeJsonToPrismic(kontentPage.pageName, kontentPage, "KontentAIJsons");
 
-	const kontentPages = mapPrismicPagesToKontentPages(structuredPrismicPage);
-
-	writeJsonToPrismic("KontentPages", kontentPages, "PrismicJsons");
-
-	return kontentPages;
+	return kontentPage;
 }

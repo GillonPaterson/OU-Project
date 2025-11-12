@@ -2,14 +2,15 @@ import axios from "axios";
 import { PrismicPage } from "./types/prismicTypes.ts";
 import { writeJsonToPrismic } from "./utils/logging.ts";
 import * as dotenv from "dotenv";
-import { ConvertPrismicElementsToKontentAI } from "./Prismic/prismicParser.ts";
-import { createKontentClient } from "./KontentAI/kontentAIClient.ts";
+import { ConvertPrismicPageToKontentPage } from "./Prismic/prismicParser.ts";
 
 dotenv.config();
 const PRISMIC_REPO_NAME = process.env.PRISMIC_REPO_NAME;
 const PRISMIC_API_KEY = process.env.PRISMIC_ACCESS_TOKEN;
 const API_URL = `https://customtypes.prismic.io/customtypes`;
-import * as prismic from "@prismicio/client";
+import { KontentPage } from "./types/kontentTypes.ts";
+import { checkIfSnippetsExists, kontentPageBuilder } from "./KontentAI/kontentAIPageBuilder.ts";
+import { createKontentClient } from "./utils/kontentAIClient.ts";
 
 if (!PRISMIC_REPO_NAME || !PRISMIC_API_KEY) {
 	throw new Error("Prismic EnVars Not Provided");
@@ -48,29 +49,31 @@ export async function fetchCustomTypes(): Promise<PrismicPage[]> {
 }
 
 export async function migrateCustomTypes() {
+
 	const prismicPagesJson = await fetchCustomTypes();
 
-	const kontentMappedPages = ConvertPrismicElementsToKontentAI(prismicPagesJson);
+	const kontentClient = createKontentClient()
 
-	console.log(kontentMappedPages)
-	writeJsonToPrismic("test", kontentMappedPages[2], "KontentAIJsons");
+	const KontentAIPages = prismicPagesJson.map((page) => {
+		return ConvertPrismicPageToKontentPage(page);
+	});
 
-	// const kontentClient = createKontentClient();
+	KontentAIPages.map((page: KontentPage) => {
+		return checkIfSnippetsExists(page, kontentClient);
+	})
 
-	// console.log("✅ Logging Mapped KontentAI Jsons");
-	// kontentMappedPages.forEach((page) => {
-	// 	writeJsonToPrismic(page.pageName, page.pageTabs, "KontentAIJsons");
-	// });
+	writeJsonToPrismic("kontent", KontentAIPages, "PrismicJsons");
 
-	// Function Call to Write to KontentAI
-	// kontentMappedPages.forEach(async (page) => {
-	// 	try {
-	// 		await kontentPageBuilder(page, kontentClient);
-	// 	} catch (e) {
-	// 		console.log("Something Went Wrong", e);
-	// 	}
-	// });
+	try {
+		KontentAIPages.forEach(async page => {
+			await kontentPageBuilder(page, kontentClient);
+			console.log(`✅ Created: ${page.pageName}`);
+		});
+	} catch (e) {
+		console.log(`Something went wrong: ${e}`)
+	}
 }
 
 migrateCustomTypes();
+
 

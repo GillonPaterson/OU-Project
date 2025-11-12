@@ -1,0 +1,62 @@
+{
+  "pageName": "test-page",
+  "codename": "test_page",
+  "pageTabs": [
+    {
+      "tabName": "Main",
+      "codeName": "main",
+      "pageElements": [
+        {
+          "type": "Element",
+          "element": {
+            "name": "page-title",
+            "codename": "page_title",
+            "type": "rich_text",
+            "is_required": true,
+            "allowed_table_formatting": [],
+            "allowed_blocks": [
+              "text",
+              "tables"
+            ],
+            "maximum_text_length": {
+              "applies_to": "characters",
+              "value": 50
+            }
+          }
+        },
+        {
+          "type": "Element",
+          "element": {
+            "name": "page-paragrph",
+            "codename": "page_paragrph",
+            "type": "rich_text",
+            "is_required": true,
+            "allowed_table_formatting": [],
+            "allowed_blocks": [
+              "text",
+              "tables"
+            ],
+            "maximum_text_length": {
+              "applies_to": "characters",
+              "value": 50
+            }
+          }
+        },
+        {
+          "type": "Element",
+          "element": {
+            "name": "page-link",
+            "codename": "page_link",
+            "depends_on": {
+              "element": {
+                "codename": "page_title"
+              }
+            },
+            "type": "url_slug",
+            "is_required": true
+          }
+        }
+      ]
+    }
+  ]
+}

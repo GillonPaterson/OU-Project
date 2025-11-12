@@ -1,80 +1,125 @@
-import {
-	createManagementClient,
-	ManagementClient,
-} from "@kontent-ai/management-sdk";
-import * as dotenv from "dotenv";
+import { ContentTypeSnippetResponses, ManagementClient, SharedModels, ViewContentTypeSnippetQuery } from "@kontent-ai/management-sdk";
 import {
 	KontentPage,
-	ContentTypeElement,
 	KontentTab,
 	KontentCreateContentType,
+	KontentTypeElement,
+	KontentSnippetData,
+	KontentElementType,
 } from "../types/kontentTypes.ts";
 import { ElementType } from "@kontent-ai/delivery-sdk";
+import { MappedElement } from "../types/prismicTypes.ts";
+import { toPrismicApiKey } from "./kontentElementBuilders.ts";
+import { handleKontentCall, kontentManagementApi } from "../utils/kontentAIClient.ts";
+import { error } from "console";
 
-dotenv.config();
-const KONTENT_PROJECT_ID = process.env.KONTENT_PROJECT_ID;
-const KONTENTAI_KEY = process.env.KONTENTAI_KEY;
+export async function checkIfSnippetsExists(
+	page: KontentPage,
+	kontentClient: ManagementClient
+): Promise<KontentPage> {
+	for (const tab of page.pageTabs) {
+		for (const element of tab.pageElements) { 
+			if (element.type == KontentElementType.Snippet) {
+				const snippetID = await doesKontentSnippetExist(
+					element.element.name
+				);
 
-if (!KONTENT_PROJECT_ID || !KONTENTAI_KEY) {
-	throw new Error("KontentAI EnVars Not Provided")
+				if (snippetID) {
+					element.element.snippetID = snippetID;
+				} else {
+
+					const newSnippetID = await createKontentSnippet(element.element, kontentClient);
+					
+					if (newSnippetID) {
+						element.element.snippetID = newSnippetID;
+					} else {
+						throw error(`failed to create snippet ${element.element}`);
+					}
+				}
+			}
+		};
+	};
+
+	return page;
 }
 
-const client = createManagementClient({
-	environmentId: KONTENT_PROJECT_ID, // id of your Kontent.ai environment
-	apiKey: KONTENTAI_KEY, // Content management API token
-});
+export async function doesKontentSnippetExist(
+	snippetCodeName: string,
+): Promise<string | null> {
+	try {
+
+		const response = await kontentManagementApi.get(`/snippets/codename/${snippetCodeName}`);
+
+		return response.data.id
+
+	} catch (err: any) {
+		console.log(err)
+		return null;
+	}
+}
+
+export async function createKontentSnippet(
+	snippet: KontentSnippetData,
+	client: ManagementClient
+): Promise<string | null> {
+
+	try {
+		const response = await client.addContentTypeSnippet()
+			.withData((builder) => {
+
+				return {
+					name: snippet.name,
+					codename: toPrismicApiKey(snippet.name),
+					elements: buildSnippetElements(builder, snippet),
+				};
+			})
+			.toPromise()
+		
+		if (response) {
+			return response.data.id;
+		} else {
+			return null;
+		}
+	} catch (err) {
+		if (err instanceof SharedModels.ContentManagementBaseKontentError) {
+			console.log(err.validationErrors);
+			throw new Error(`Error when Creating Snippet`);
+		} else {
+			throw new Error(`Unkown Error Occurred when Creating Snippet ${err}`);
+		}
+	}
+
+}
 
 /**
  * Builds the Page in KontentAI Accepts a single Kontent Page
  * For Pages with multiple tabs the tabs elements are mapped individually and then flattened to one big array with the content-group specified for each element
  */
 export async function kontentPageBuilder(page: KontentPage, client: ManagementClient) {
-	const contentTypeResponse = await client
-		.addContentType()
+	const contentTypeResponse = await handleKontentCall(
+		client.addContentType()
 		.withData((builder) => {
-
-			if (page.pageTabs.length > 1) {
-				const contentGroups = buildCreateContentGroup(page.pageTabs);
-
-				page.pageTabs.map((tab) => {
-					return tab.pageElements.map((element) => {
-						return buildElement(builder, element);
-					});
-				});
-
-				const allElements = page.pageTabs.flatMap((tab) => tab.pageElements);
-
-				throw new Error("killed it");
-
-				return {
-					name: page.pageName,
-					codename: page.codename,
-					content_groups: contentGroups,
-					elements: allElements,
-				};
-			}
-
-			page.pageTabs.map((tab) => {
-				return tab.pageElements.map((element) => {
-					return buildElement(builder, element);
-				});
-			});
-
-			throw new Error("killed it");
-
 			return {
 				name: page.pageName,
 				codename: page.codename,
-				elements: page.pageTabs[0].pageElements,
+				content_groups: buildCreateContentGroup(page.pageTabs),
+				elements: buildPageElements(builder, page.pageTabs),
 			};
 		})
-		.toPromise();
+		.toPromise()
+	)
 
-	console.log(
-		`Created content type: ${contentTypeResponse.data.name} (codename: ${contentTypeResponse.data.codename})`
-	);
+	if (contentTypeResponse) {
+		console.log(
+			`Created content type: ${contentTypeResponse.data.name} (codename: ${contentTypeResponse.data.codename})`
+		);
 
-	return contentTypeResponse;
+		return contentTypeResponse;
+	} else {
+		throw Error (`Failed to Make Page: ${page.pageName}`)
+	}
+
+
 }
 
 /**
@@ -82,8 +127,8 @@ export async function kontentPageBuilder(page: KontentPage, client: ManagementCl
  */
 function buildElement(
 	builder: any,
-	element: ContentTypeElement
-): ContentTypeElement {
+	element: KontentTypeElement
+) {
 	switch (element.type) {
 		case ElementType.Text:
 			return builder.textElement(element);
@@ -94,10 +139,49 @@ function buildElement(
 		case ElementType.Number:
 			return builder.numberElement(element);
 		case ElementType.MultipleChoice:
-			return builder.MultipleChoice(element);
+			return builder.multipleChoiceElement(element);
 		default:
 			return builder.numberElement(element);
 	}
+}
+
+function buildSnippetElements(builder: any, snippet: KontentSnippetData) {
+
+	const snippetElements: any[] = [] 
+	
+	snippet.elements.forEach(
+		(element) => {
+			snippetElements.push(buildElement(builder, element));
+		}
+	);
+
+	return snippetElements;
+}
+
+function buildPageElements(builder: any, pageTabs: KontentTab[]) {
+	
+	const pageElements: any[] = [];
+	
+	pageTabs.forEach(tab => {
+		tab.pageElements.forEach(element => {
+			if (element.type == KontentElementType.Element) {
+				pageElements.push(buildElement(builder, element.element))
+			} else if (element.type == KontentElementType.Snippet) {
+				pageElements.push({
+					name: element.element.name,
+					codename: toPrismicApiKey(element.element.name),
+					type: "snippet",
+					snippet : {
+						id: element.element.snippetID
+					}
+				})
+
+			}
+			
+		});
+	})
+
+	return pageElements;
 }
 
 /**
