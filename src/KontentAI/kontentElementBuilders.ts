@@ -29,7 +29,7 @@ export function buildTextElement(
 		...(contentGroup
 			? {
 					content_group: {
-						external_id: contentGroup,
+						codename: contentGroup,
 					},
 			}
 			: {}),
@@ -64,7 +64,7 @@ export function buildBooleanElement(
 		...(contentGroup
 			? {
 					content_group: {
-						external_id: contentGroup,
+						codename: contentGroup,
 					},
 		}
 			: {}),
@@ -89,7 +89,7 @@ export function buildAssetElement(
 		...(contentGroup
 			? {
 					content_group: {
-						external_id: contentGroup,
+						codename: contentGroup,
 					},
 			}
 			: {}),
@@ -113,7 +113,7 @@ export function buildDateTimeElement(
 		...(contentGroup
 			? {
 					content_group: {
-						external_id: contentGroup,
+						codename: contentGroup,
 					},
 			}
 			: {}),
@@ -137,7 +137,7 @@ export function buildImageElement(
 		...(contentGroup
 			? {
 					content_group: {
-						external_id: contentGroup,
+						codename: contentGroup,
 					},
 			}
 			: {}),
@@ -161,7 +161,7 @@ export function buildNumberElement(
 		...(contentGroup
 			? {
 					content_group: {
-						external_id: contentGroup,
+						codename: contentGroup,
 					},
 			}
 			: {}),
@@ -198,7 +198,7 @@ export function buildStructuredTextElement(
 		...(contentGroup
 			? {
 					content_group: {
-						external_id: contentGroup,
+						codename: contentGroup,
 					},
 			}
 			: {}),
@@ -224,7 +224,7 @@ export function buildSelectElement(
 		...(contentGroup
 			? {
 					content_group: {
-						external_id: contentGroup,
+						codename: contentGroup,
 					},
 			}
 			: {}),
@@ -254,7 +254,7 @@ export function buildLinkElement(
 		...(contentGroup
 			? {
 					content_group: {
-						external_id: contentGroup,
+						codename: contentGroup,
 					},
 			}
 			: {}),

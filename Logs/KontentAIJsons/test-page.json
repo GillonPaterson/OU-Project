@@ -41,20 +41,6 @@
               "value": 50
             }
           }
-        },
-        {
-          "type": "Element",
-          "element": {
-            "name": "page-link",
-            "codename": "page_link",
-            "depends_on": {
-              "element": {
-                "codename": "page_title"
-              }
-            },
-            "type": "url_slug",
-            "is_required": true
-          }
         }
       ]
     }

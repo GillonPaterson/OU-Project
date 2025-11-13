@@ -144,6 +144,8 @@ export function mapPrismicPagesToKontentPages(
 
 			if (prismicPage.tabs.length > 1) {
 
+				const content_group = toPrismicApiKey(tab.tabName)
+
 				const kontentTabElements: MappedKontentElement[] = []
 
 				tab.elements.map((element) => {
@@ -179,14 +181,14 @@ export function mapPrismicPagesToKontentPages(
 					} else {
 						kontentTabElements.push({
 							type: KontentElementType.Element,
-							element: mapPrismicFieldToKontent(element.element, tab.depends_on, tab.tabName)
+							element: mapPrismicFieldToKontent(element.element, tab.depends_on, content_group)
 						});
 					}
 				})
 
 				return {
 					tabName: tab.tabName,
-					codeName: toPrismicApiKey(tab.tabName),
+					codeName: content_group,
 					pageElements: kontentTabElements,
 				};
 			} else {

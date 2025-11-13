@@ -24,7 +24,7 @@
                 "value": 50
               },
               "content_group": {
-                "external_id": "Main"
+                "codename": "main"
               }
             }
           },
@@ -36,7 +36,7 @@
               "type": "number",
               "is_required": true,
               "content_group": {
-                "external_id": "Main"
+                "codename": "main"
               }
             }
           }
@@ -63,7 +63,7 @@
                 "value": 50
               },
               "content_group": {
-                "external_id": "Another Page"
+                "codename": "another_page"
               }
             }
           }
@@ -187,7 +187,7 @@
                 "value": 50
               },
               "content_group": {
-                "external_id": "Main"
+                "codename": "main"
               }
             }
           },
@@ -203,7 +203,7 @@
                 "value": 50
               },
               "content_group": {
-                "external_id": "Main"
+                "codename": "main"
               }
             }
           },
@@ -219,7 +219,7 @@
                 "value": 50
               },
               "content_group": {
-                "external_id": "Main"
+                "codename": "main"
               }
             }
           },
@@ -235,7 +235,7 @@
                 "value": 50
               },
               "content_group": {
-                "external_id": "Main"
+                "codename": "main"
               }
             }
           },
@@ -247,7 +247,7 @@
               "type": "asset",
               "is_required": true,
               "content_group": {
-                "external_id": "Main"
+                "codename": "main"
               }
             }
           },
@@ -268,7 +268,7 @@
                 "value": 50
               },
               "content_group": {
-                "external_id": "Main"
+                "codename": "main"
               }
             }
           },
@@ -291,50 +291,24 @@
                 }
               ],
               "content_group": {
-                "external_id": "Main"
+                "codename": "main"
               }
             }
           },
           {
             "type": "Snippet",
             "element": {
-              "name": "item_group",
-              "elements": [
-                {
-                  "name": "Title (optional) Repeatable",
-                  "codename": "title_optional_repeatable",
-                  "type": "text",
-                  "is_required": true,
-                  "maximum_text_length": {
-                    "applies_to": "characters",
-                    "value": 50
-                  }
-                },
-                {
-                  "name": "Title (optional)",
-                  "codename": "title_optional",
-                  "type": "text",
-                  "is_required": true,
-                  "maximum_text_length": {
-                    "applies_to": "characters",
-                    "value": 50
-                  }
-                }
-              ]
-            }
-          },
-          {
-            "type": "Snippet",
-            "element": {
               "name": "another_slice",
-              "elements": []
+              "elements": [],
+              "snippetID": "174f0d3a-2e0d-4ed1-a764-26f448960a33"
             }
           },
           {
             "type": "Snippet",
             "element": {
               "name": "slice",
-              "elements": []
+              "elements": [],
+              "snippetID": "81047421-0cc9-4288-8152-a27b3b02266c"
             }
           }
         ]
@@ -355,7 +329,7 @@
                 "value": 50
               },
               "content_group": {
-                "external_id": "Journal"
+                "codename": "journal"
               }
             }
           },
@@ -380,7 +354,8 @@
                     "value": 50
                   }
                 }
-              ]
+              ],
+              "snippetID": "98429cf1-268e-47b8-a3cd-374f21e4e833"
             }
           },
           {
@@ -413,21 +388,8 @@
                     "value": 50
                   }
                 }
-              ]
-            }
-          },
-          {
-            "type": "Snippet",
-            "element": {
-              "name": "another_slice",
-              "elements": []
-            }
-          },
-          {
-            "type": "Snippet",
-            "element": {
-              "name": "slice",
-              "elements": []
+              ],
+              "snippetID": "029ef300-b262-47db-92d0-67d93e7974ca"
             }
           }
         ]
@@ -476,20 +438,6 @@
                 "applies_to": "characters",
                 "value": 50
               }
-            }
-          },
-          {
-            "type": "Element",
-            "element": {
-              "name": "page-link",
-              "codename": "page_link",
-              "depends_on": {
-                "element": {
-                  "codename": "page_title"
-                }
-              },
-              "type": "url_slug",
-              "is_required": true
             }
           }
         ]

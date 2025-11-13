@@ -56,29 +56,6 @@
         "config": {
           "labels": {},
           "choices": {
-            "item_group": {
-              "type": "Slice",
-              "fieldset": "Item Group",
-              "description": "A group of items with an optional title",
-              "icon": "playlist_add",
-              "display": "list",
-              "non-repeat": {
-                "item_group_title": {
-                  "type": "Text",
-                  "config": {
-                    "label": "Title (optional)"
-                  }
-                }
-              },
-              "repeat": {
-                "repeatable_item_group_title": {
-                  "type": "Text",
-                  "config": {
-                    "label": "Title (optional) Repeatable"
-                  }
-                }
-              }
-            },
             "another_slice": {
               "type": "Slice",
               "fieldset": "Another slice",
@@ -158,24 +135,6 @@
                   }
                 }
               }
-            },
-            "another_slice": {
-              "type": "Slice",
-              "fieldset": "Another slice",
-              "description": "Another slice",
-              "icon": "zoom_out_map",
-              "display": "list",
-              "non-repeat": {},
-              "repeat": {}
-            },
-            "slice": {
-              "type": "Slice",
-              "fieldset": "slice",
-              "description": "slice",
-              "icon": "add_alert",
-              "display": "list",
-              "non-repeat": {},
-              "repeat": {}
             }
           }
         }

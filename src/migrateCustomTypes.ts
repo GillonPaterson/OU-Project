@@ -58,17 +58,19 @@ export async function migrateCustomTypes() {
 		return ConvertPrismicPageToKontentPage(page);
 	});
 
-	KontentAIPages.map((page: KontentPage) => {
-		return checkIfSnippetsExists(page, kontentClient);
-	})
+	const KontentPagesWithSnippets: KontentPage[] = [];
 
-	writeJsonToPrismic("kontent", KontentAIPages, "PrismicJsons");
+	for (const page of KontentAIPages) {
+		KontentPagesWithSnippets.push(await checkIfSnippetsExists(page, kontentClient))
+	}
+
+	writeJsonToPrismic("kontent", KontentPagesWithSnippets, "PrismicJsons");
 
 	try {
-		KontentAIPages.forEach(async page => {
+		for (const page of KontentPagesWithSnippets) {
 			await kontentPageBuilder(page, kontentClient);
 			console.log(`✅ Created: ${page.pageName}`);
-		});
+		}
 	} catch (e) {
 		console.log(`Something went wrong: ${e}`)
 	}

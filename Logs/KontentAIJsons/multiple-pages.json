@@ -23,7 +23,7 @@
               "value": 50
             },
             "content_group": {
-              "external_id": "Main"
+              "codename": "main"
             }
           }
         },
@@ -35,7 +35,7 @@
             "type": "number",
             "is_required": true,
             "content_group": {
-              "external_id": "Main"
+              "codename": "main"
             }
           }
         }
@@ -62,7 +62,7 @@
               "value": 50
             },
             "content_group": {
-              "external_id": "Another Page"
+              "codename": "another_page"
             }
           }
         }
