@@ -3,7 +3,6 @@ import {
 	ManagementClient,
 } from "@kontent-ai/management-sdk";
 import * as dotenv from "dotenv";
-import axios, { AxiosInstance } from "axios";
 
 dotenv.config();
 
@@ -23,14 +22,7 @@ export function createKontentClient(): ManagementClient {
 	});
 }
 
-export const kontentManagementApi: AxiosInstance = axios.create({
-	baseURL: `https://manage.kontent.ai/v2/projects/${KONTENT_PROJECT_ID}`,
-	headers: {
-		Authorization: `Bearer ${KONTENTAI_KEY}`,
-		"Content-Type": "application/json",
-	},
-	timeout: 10000,
-});
+
 
 export async function handleKontentCall<T>(
 	promise: Promise<T>
