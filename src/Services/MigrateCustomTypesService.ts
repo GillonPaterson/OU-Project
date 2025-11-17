@@ -1,12 +1,12 @@
 import "reflect-metadata";
-import { KontentPage } from "../Models/kontentTypes.ts";
+import { KontentPage } from "../Models/kontentTypes";
 import { inject, injectable } from "inversify";
-import { PrismicClient } from "../Clients/PrismicClient.ts";
-import { PrismicParserService } from "./PrismicParserService.ts";
-import { KontentAIClient } from "../Clients/KontentAIClient.ts";
-import { Logger } from "../utils/Logger.ts";
-import { container } from "../inversify.config.ts";
-import { Types } from "../types.ts";
+import { PrismicClient } from "../Clients/PrismicClient";
+import { PrismicParserService } from "./PrismicParserService";
+import { KontentAIClient } from "../Clients/KontentAIClient";
+import { Logger } from "../utils/Logger";
+import { container } from "../inversify.config";
+import { Types } from "../types";
 
 @injectable()
 export class MigrateCustomTypesService {
@@ -24,25 +24,27 @@ export class MigrateCustomTypesService {
 			return this.prismicParser.ConvertPrismicPageToKontentPage(page);
 		});
 
-		const KontentPagesWithSnippets: KontentPage[] = [];
+		KontentAIPages.forEach((page) => {
+			this.logger.writeJsonToLogs(page.pageName, page, "KontentAIJsons");
+		});
 
-		for (const page of KontentAIPages) {
-			KontentPagesWithSnippets.push(
-				await this.kontentAiClient.checkIfSnippetsExists(page)
-			);
-		}
+		if (!process.env.MOCK_MODE) {
+			const KontentPagesWithSnippets: KontentPage[] = [];
 
-		this.logger.writeJsonToLogs("kontent", KontentPagesWithSnippets, "PrismicJsons");
-
-		try {
-			for (const page of KontentPagesWithSnippets) {
-				await this.kontentAiClient.kontentPageBuilder(page);
-				console.log(`✅ Created: ${page.pageName}`);
+			for (const page of KontentAIPages) {
+				KontentPagesWithSnippets.push(await this.kontentAiClient.checkIfSnippetsExists(page));
 			}
-		} catch (e) {
-			console.log(`Something went wrong: ${e}`);
+
+			try {
+				for (const page of KontentPagesWithSnippets) {
+					await this.kontentAiClient.kontentPageBuilder(page);
+					this.logger.logSuccess(`Created: ${page.pageName}`);
+				}
+			} catch (e) {
+				this.logger.logFail(`Failed Making Kontent Page`, e);
+			}
+		} else {
+			this.logger.logSuccess("Mock Run Completed");
 		}
 	};
 }
-
-

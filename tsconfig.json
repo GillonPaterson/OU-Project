@@ -5,13 +5,12 @@
 	"esModuleInterop": true,
 	"strict": true,
 	"skipLibCheck": true,
-	"allowImportingTsExtensions": true,
-	"noEmit": true,
 	"moduleResolution": "node",
 	"types": ["jest", "node"],
 	"experimentalDecorators": true,
 	"emitDecoratorMetadata": true,
-	"sourceMap": true
+	"sourceMap": true,
+	
 },
 "include": ["src/**/*"]
 }

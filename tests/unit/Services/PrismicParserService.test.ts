@@ -8,9 +8,9 @@ import { generateMappedPrismicTab } from "../../testHelpers/PrismicTestHelpers/m
 
 describe("PrismicParserService Tests", () => {
 
+	const logger = new Logger();
     const kontentUtils = new KontentUtils()
     const kontentElementBuilderService = new KontentElementBuilderService(kontentUtils);
-    const logger = new Logger()
     
     const prismicParserService = new PrismicParserService(
 			kontentUtils,

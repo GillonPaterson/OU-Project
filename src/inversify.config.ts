@@ -1,12 +1,12 @@
 import { Container } from "inversify";
-import { Types } from "./types.ts";
+import { Types } from "./types";
 import { PrismicClient } from "./Clients/PrismicClient";
 import { KontentAIClient } from "./Clients/KontentAIClient";
 import { KontentUtils } from "./utils/KontentUtils";
 import { KontentElementBuilderService } from "./Services/KontentElementBuilderService";
 import { Logger } from "./utils/Logger";
-import { MigrateCustomTypesService } from "./Services/MigrateCustomTypesService.ts"
-import { PrismicParserService } from "./Services/PrismicParserService.ts";
+import { MigrateCustomTypesService } from "./Services/MigrateCustomTypesService"
+import { PrismicParserService } from "./Services/PrismicParserService";
 
 const container = new Container();
 

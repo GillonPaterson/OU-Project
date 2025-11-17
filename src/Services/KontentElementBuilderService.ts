@@ -2,7 +2,7 @@ import { ContentTypeElements } from "@kontent-ai/management-sdk";
 import { inject, injectable } from "inversify";
 import { MappedElement } from "../Models/prismicTypes";
 import { KontentUtils } from "../utils/KontentUtils";
-import { Types } from "../types.ts";
+import { Types } from "../types";
 
 @injectable()
 export class KontentElementBuilderService {

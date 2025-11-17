@@ -6,11 +6,15 @@ import { ElementType } from "@kontent-ai/delivery-sdk";
 import { KontentUtils } from "../utils/KontentUtils";
 import { kontentManagementApi } from "../utils/AxiosIntances/KontentAiAxiosInstance";
 import { createKontentClient } from "../utils/kontentAIClientBuilder";
-import { Types } from "../types.ts";
+import { Types } from "../types";
+import { Logger } from "../utils/Logger";
 
 @injectable()
 export class KontentAIClient {
-	constructor(@inject(Types.KontentUtils) private kontentUtils: KontentUtils) {}
+	constructor(
+		@inject(Types.KontentUtils) private kontentUtils: KontentUtils,
+		@inject(Types.Logger) private logger: Logger
+	) {}
 
 	client = createKontentClient();
 
@@ -55,7 +59,7 @@ export class KontentAIClient {
 			return contentTypeResponse;
 		} catch (err) {
 			if (err instanceof SharedModels.ContentManagementBaseKontentError) {
-				console.log(err.validationErrors);
+				this.logger.logFail("Failed building Kontent Page", err.validationErrors)
 				throw new Error(`Error Creating Page: ${page.pageName}`);
 			} else {
 				throw new Error(`Error Creating Page: ${page.pageName}`);
@@ -116,9 +120,8 @@ export class KontentAIClient {
 			}
 		} catch (err) {
 			if (err instanceof SharedModels.ContentManagementBaseKontentError) {
-				console.log(err.validationErrors);
-				console.log(snippet)
-				throw new Error(`Error when Creating Snippet`);
+				this.logger.logFail("Failed building Kontent Snippet", err.validationErrors);
+				throw new Error();
 			} else {
 				throw new Error(`Unkown Error Occurred when Creating Snippet ${err}`);
 			}
@@ -134,8 +137,6 @@ export class KontentAIClient {
 		snippet.elements.forEach((element) => {
 			snippetElements.push(this.buildElement(builder, element));
 		});
-
-		console.log(snippetElements);
 
 		return snippetElements;
 	};

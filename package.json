@@ -2,7 +2,8 @@
 	"type": "commonjs",
 	"scripts": {
 		"dev": "NODE_NO_WARNINGS=1 npx ts-node src/migrateCustomTypes.ts",
-		"test": "TEST_MODE=true jest"
+		"test": "TEST_MODE=true jest",
+		"mock": "MOCK_MODE=true NODE_NO_WARNINGS=1 npx ts-node src/migrateCustomTypes.ts"
 	},
 	"dependencies": {
 		"@kontent-ai/core-sdk": "^11.0.2",

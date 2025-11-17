@@ -4,7 +4,7 @@ import { KontentUtils } from "../utils/KontentUtils";
 import { KontentPage, KontentTab, MappedKontentElement, KontentTypeElement, KontentElementType } from "../Models/kontentTypes";
 import { KontentElementBuilderService } from "./KontentElementBuilderService";
 import { Logger } from "../utils/Logger";
-import { Types } from "../types.ts";
+import { Types } from "../types";
 
 @injectable()
 export class PrismicParserService {

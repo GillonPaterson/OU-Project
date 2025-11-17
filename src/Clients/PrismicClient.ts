@@ -2,7 +2,7 @@ import { PrismicPage } from "../Models/prismicTypes";
 import { inject, injectable } from "inversify";
 import { PrismicApi } from "../utils/AxiosIntances/PrismicAxiosInstance";
 import { Logger } from "../utils/Logger";
-import { Types } from "../types.ts";
+import { Types } from "../types";
 
 @injectable()
 export class PrismicClient {
@@ -16,12 +16,12 @@ export class PrismicClient {
 	try {
 		const response = await PrismicApi.get("/customtypes");
 
-		console.log("✅ Custom types fetched successfully!");
+		this.logger.logSuccess("Custom types fetched successfully!");
 
 		const data: PrismicPage[] = response.data;
 
 
-		console.log("✅ Logging Prismic Jsons");
+		this.logger.logSuccess("Logging Prismic Jsons");
 		data.forEach((page) => {
 			this.logger.writeJsonToLogs(page.id, page, "PrismicJsons");
 		});
@@ -29,10 +29,8 @@ export class PrismicClient {
 
 		return data;
 	} catch (error: any) {
-		throw new Error(
-			"❌ Error fetching custom types:",
-			error.response?.data || error.message
-		);
+		this.logger.logFail("Error fetching custom types:", error);
+		throw new Error()
 	}
 }
 }
